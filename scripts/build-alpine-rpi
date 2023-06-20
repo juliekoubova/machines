@@ -1,0 +1,304 @@
+#!/bin/sh
+set -e
+
+_vecho() {
+  echo >&2 $@
+}
+
+_die() {
+  echo >&2 $@
+  exit 1
+}
+
+_has() {
+  command -v "${1}" > /dev/null
+}
+
+_usage() {
+  cat >&2 << EOF
+  usage: build-rpi [-h] -c CONFIG -d DEVICE 
+
+  Install Alpine for a Raspberry Pi on an SD card.
+
+  options:
+   -c  Use the specified config
+   -d  The SD card device
+   -h  Show this help
+
+EOF
+  exit $1
+}
+
+_fetch() {
+  if [ -f "${1}" ]; then
+    _vecho "Already got ${1}"
+  else
+    _vecho "Downloading ${1}"
+    curl --progress-bar --output "${1}" "${2}"
+  fi
+}
+
+_find_tgz() {
+  curl -Ls "${base_url}" \
+    | grep -oE 'href="([^"#]+)"' \
+    | sed -n 's/^href="\([^"]*\)".*/\1/p' \
+    | grep -Ex '^alpine-rpi-.*\.tar\.gz$' \
+    | sort -rV \
+    | head -n 1
+}
+
+ovl_mkdirp() {
+  mkdir -p "${ovl}/${1}"
+}
+
+ovl_auto_login() {
+  _vecho "Configuring user ${RPI_AUTO_LOGIN} auto-login on tty1"
+  cat > "${ovl}/etc/inittab" <<EOF
+# /etc/inittab
+
+::sysinit:/sbin/rc sysinit
+::wait:/sbin/rc default
+
+# Set up a couple of getty's
+#tty1::respawn:/sbin/getty 38400 tty1
+tty1::respawn:/bin/login -f ${RPI_AUTO_LOGIN}
+tty2::respawn:/sbin/getty 38400 tty2
+tty3::respawn:/sbin/getty 38400 tty3
+tty4::respawn:/sbin/getty 38400 tty4
+tty5::respawn:/sbin/getty 38400 tty5
+tty6::respawn:/sbin/getty 38400 tty6
+
+# Put a getty on the serial port
+#ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/sbin/rc shutdown
+EOF
+}
+
+ovl_rc_add() {
+  local service="${1}"
+  local runlevel="${ovl}/etc/runlevels/${2:-default}"
+  mkdir -p "${runlevel}"
+  ln -s "/etc/init.d/${service}" "${runlevel}/${service}"
+}
+
+ovl_apk_add() {
+  _vecho "Adding ${1} to world"
+  ovl_mkdirp etc/apk
+  echo "${1}" >> "${ovl}/etc/apk/world"
+}
+
+ovl_addusers() {
+  local service="build-alpine-rpi-addusers"
+  local script="${ovl}/etc/init.d/${service}" 
+  ovl_mkdirp etc/init.d
+  ovl_rc_add "${service}" default
+
+  cat > "${script}" <<EOF
+#!/sbin/openrc-run
+
+start() {
+  rm -f /etc/runlevels/*/\$RC_SVCNAME
+EOF
+
+  for user in ${all_users}; do
+    _vecho "Adding user ${user}"
+    cat >> "${script}" <<EOF
+  ebegin "Adding user ${user}"
+  adduser -D "${user}"
+  eend \$?
+EOF
+  done
+
+  for user in ${RPI_WHEEL_USERS}; do
+    _vecho "Adding user ${user} to wheel"
+    cat >> "${script}" <<EOF
+  ebegin "Adding user ${user} to wheel"
+  adduser "${user}" wheel
+  eend \$?
+EOF
+  done
+
+  cat >> "${script}" <<EOF
+}
+EOF
+
+  chmod +x "${script}"
+}
+
+ovl_doas() {
+  ovl_apk_add doas
+  echo "permit persist :wheel" > "${ovl}/etc/doas.conf"
+}
+
+ovl_wpa_supplicant() {
+  ovl_apk_add wpa_supplicant
+  ovl_rc_add wpa_supplicant boot
+
+  _vecho "Setting wlan country to ${RPI_WIFI_COUNTRY}"
+  ovl_mkdirp etc/wpa_supplicant
+  echo "country=${RPI_WIFI_COUNTRY}" > "${ovl}/etc/wpa_supplicant/wpa_supplicant.conf"
+
+  _vecho "Setting wlan ssid and psk"
+  wpa_passphrase "${RPI_WIFI_SSID}" "${RPI_WIFI_PSK}" \
+    >> "${ovl}/etc/wpa_supplicant/wpa_supplicant.conf"
+
+  _vecho "Configuring DHCP on wlan0"
+  cat >> "${ovl}/etc/network/interfaces" <<EOF
+auto wlan0
+iface wlan0 inet dhcp
+iface wlan0 inet6 auto
+EOF
+}
+
+ovl_networking() {
+  ovl_rc_add networking boot
+
+  _vecho "Configuring hostname ${RPI_HOSTNAME}"
+  echo "${RPI_HOSTNAME}" > "${ovl}/etc/hostname"
+
+  ovl_mkdirp etc/network
+  cat > "${ovl}/etc/network/interfaces" <<EOF
+auto lo
+iface lo inet loopback
+EOF
+
+  [ -n "${RPI_WIFI_SSID}" ] && ovl_wpa_supplicant
+}
+
+ovl_openssh() {
+  ovl_apk_add openssh
+  ovl_rc_add sshd default
+  ovl_mkdirp etc/sshd
+  cat > "${ovl}/etc/sshd/sshd_config" <<EOF
+AuthorizedKeysFile     .ssh/authorized_keys
+PasswordAuthentication no
+PermitRootLogin        no
+EOF
+}
+
+ovl_lbuconf() {
+  _vecho "Configuring lbu"
+  ovl_mkdirp etc/lbu
+  echo "LBU_MEDIA=mmcblk0p1" > "${ovl}/etc/lbu/lbu.conf"
+}
+
+make_ovl() {
+  if [ -e "${ovl}" ]; then
+    _vecho "Deleting ${ovl}"
+    rm -rf "${ovl}"
+  fi
+
+  _vecho "Configuring default boot services"
+  ovl_mkdirp etc
+  touch "${ovl}/etc/.default_boot_services"
+
+  ovl_rc_add seedrng boot
+  ovl_rc_add swclock boot
+  ovl_rc_add sysctl boot
+
+  ovl_rc_add acpid default
+  ovl_rc_add chrony default
+  ovl_rc_add crond default
+
+  ovl_doas
+  ovl_lbuconf
+  ovl_networking
+  ovl_openssh
+
+  [ -n "${all_users}" ] && ovl_addusers
+  [ -n "${RPI_AUTO_LOGIN}" ] && ovl_auto_login
+}
+
+while getopts "c:d:h" opt; do
+  case $opt in
+    c) conf="${OPTARG}";;
+    d) disk="${OPTARG}";;
+    h) _usage 0;;
+    '?') _usage 1;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+[ -n "${conf}" ] || _usage 1
+[ -r "${conf}" ] || _die "conf ${conf} not readable"
+
+. "${conf}"
+
+if [ -n "${RPI_WIFI_SSID}${RPI_WIFI_PSK}" ]; then
+  [ -n "${RPI_WIFI_COUNTRY}" ] || _die "RPI_WIFI_COUNTRY must be set"
+  [ -n "${RPI_WIFI_SSID}" ] || _die "RPI_WIFI_SSID must be set"
+  [ -n "${RPI_WIFI_PSK}" ] || _die "RPI_WIFI_PSK must be set"
+  _has wpa_passphrase || _die "wpa_passphrase not found, try \`apk add wpa_supplicant\`"
+fi
+
+: ${RPI_ARCH:=aarch64}
+: ${RPI_ALPINE_REL:=latest-stable}
+: ${RPI_ALPINE_MIRROR:=https://dl-cdn.alpinelinux.org}
+: ${RPI_WORKDIR:=/tmp/build-rpi}
+: ${RPI_HOSTNAME:=alpineberry}
+: ${RPI_USERS:=pi}
+: ${RPI_WHEEL_USERS:=${DOAS_USER:-${SUDO_USER:-${USER}}}}
+: ${RPI_AUTO_LOGIN:=pi}
+: ${RPI_OVL_ONLY:=}
+
+base_url="${RPI_ALPINE_MIRROR}/alpine/${RPI_ALPINE_REL}/releases/${RPI_ARCH}"
+part="${disk}1"
+mnt="${RPI_WORKDIR}/mnt"
+ovl="${RPI_WORKDIR}/ovl"
+all_users=`
+  echo "${RPI_USERS} ${RPI_WHEEL_USERS} ${RPI_AUTO_LOGIN}" \
+    | xargs -n 1 | sort -u | grep -vx root | xargs`
+
+make_ovl
+
+[ -n "${RPI_OVL_ONLY}" ] && exit 0
+
+[ `id -u` -eq 0 ] || _die "must be root"
+[ -n "${disk}" ] || _usage 1
+
+if [ -z "${tgz}"]; then
+  _vecho "Searching for latest rpi .tar.gz of ${RPI_ALPINE_REL} ${RPI_ARCH}"
+  tgz=`_find_tgz`
+fi
+
+sha="${tgz}.sha256"
+
+_fetch "${RPI_WORKDIR}/${sha}" "${base_url}/${sha}"
+_fetch "${RPI_WORKDIR}/${tgz}" "${base_url}/${tgz}"
+
+_vecho "Verifying checksums"
+(cd -- "${RPI_WORKDIR}" && sha256sum -cs "${RPI_WORKDIR}/${sha}") || _die "sha256sum doesn't match"
+
+if cat /proc/mounts | grep -q "${disk}"; then
+  _vecho "Unmounting ${disk}"
+  umount ${disk}?
+fi
+
+_vecho "Creating MBR partition table on ${disk}"
+sfdisk --quiet "${disk}" <<EOF
+label: dos
+start=2048, type=c, name=alpine, bootable
+EOF
+
+_vecho "Formatting ${part} with FAT32"
+mkdosfs -F32 "${part}"
+
+_vecho "Mounting ${part}"
+mkdir -p "${mnt}"
+mount -t vfat "${part}" "${mnt}"
+
+_vecho "Extracting ${tgz}"
+tar xz -o --no-same-permissions \
+  -f "${RPI_WORKDIR}/${tgz}" \
+  -C "${mnt}" 
+
+_vecho "Writing apkovl.tar.gz"
+tar cz -f "${mnt}/build-rpi.apkovl.tar.gz" -C "${ovl}" .
+
+echo "Unmounting ${part}"
+umount "${part}"
