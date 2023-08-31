@@ -19,28 +19,39 @@
     - role: alpine-initramfs
       mkinitfs_features: base keymap kms nvme usb vfio zfs zfshost
       vfio_softdeps: [ xhci_hcd ]
+      tags: [ haos ]
 
     - role: alpine-samba
       shares:
-        - name: Downloads
-          path: /data/downloads
-          valid users: '@downloads'
+        - name: Media
+          path: /data/servarr/media
+          valid users: '@wheel'
+          write list: '@wheel'
+        - name: Torrents
+          path: /data/servarr/torrents
+          valid users: '@wheel'
+          write list: '@wheel'
+      tags: [ samba, servarr ]
 
     - role: vlan-if
       ifname: eth0-things
       vlan: 8
       raw_device: eth0
+      tags: [ haos ]
 
     - role: bridge-if
       ifname: br-things
       bridge_ports:
         - eth0-things
+      tags: [ haos ]
 
     - role: qemu-bridge
       ifname: br-things
+      tags: [ haos ]
 
     - role: postgresql
       data_dir: /data/postgres15
+      tags: [ postgres, haos ]
 
     - role: qemu-vm
       user: root
@@ -53,6 +64,7 @@
       ovmf: yes
       ovmf_vars: /data/vm/haos/ovmf_vars.fd
       extra_args: "-device vfio-pci,host=02:00.0"
+      tags: [ haos ]
 
     - role: ssh-user
       user: tereza
@@ -61,16 +73,13 @@
 
     - role: split-dnsmasq
       interface: eth0
+      tags: [ dnsmasq ]
 
-    - role: jellyfin
-      data_dir: /data/jellyfin
-      media_dir: /data/downloads
-      tags: [ jellyfin, podman, traefik ]
-
-    - role: qbittorrent
-      data_dir: /data/qbittorrent
-      tags: [ qbittorrent, podman, traefik ]
+    - role: servarr
+      zfs_data_pool: tank
+      data_dir: /data/servarr
+      tags: [ servarr ]
 
     - role: traefik
-      tags: [ podman, traefik ]
+      tags: [ podman, servarr, traefik ]
     

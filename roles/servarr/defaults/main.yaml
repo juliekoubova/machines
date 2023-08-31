@@ -1,0 +1,5 @@
+jellyfin_config: config/jellyfin
+media_dir: "{{ data_dir }}/media"
+sonarr_config: config/sonarr
+torrent_config: config/qbittorrent
+torrent_dir: "{{ data_dir }}/torrents"

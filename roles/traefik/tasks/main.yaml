@@ -20,7 +20,7 @@
       --entrypoints.websecure.http.tls.certResolver=letsencrypt
       --entrypoints.websecure.http.tls.domains[0].main=bydlenka.totoro.family
       --entrypoints.websecure.http.tls.domains[1].main=jellyfin.totoro.family
-      --entrypoints.websecure.http.tls.domains[2].main=tapir.totoro.family
+      --entrypoints.websecure.http.tls.domains[2].main=qbittorrent.totoro.family
     env:
       CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
       CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_dns_api_token }}"
