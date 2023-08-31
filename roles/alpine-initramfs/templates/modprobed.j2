@@ -1,0 +1,3 @@
+{% for driver in vfio_softdeps %}
+softdep {{ driver }} pre: vfio-pci
+{% endfor %}

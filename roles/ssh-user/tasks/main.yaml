@@ -1,0 +1,17 @@
+- name: "Create user {{ user }}"
+  ansible.builtin.user:
+    name: "{{ user }}"
+    shell: "{{ shell | default('/bin/sh') }}"
+    groups: "{{ user_groups }}"
+    password: "*"
+    update_password: on_create
+    append: yes
+  tags: [ ssh ]
+
+- name: "Download authorized_keys from GitHub {{ github_username }}"
+  ansible.posix.authorized_key:
+    user: "{{ user }}"
+    key: "https://github.com/{{ github_username }}.keys"
+  when: github_username
+  tags: [ ssh ]
+

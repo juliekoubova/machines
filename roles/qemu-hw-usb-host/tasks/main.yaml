@@ -1,0 +1,3 @@
+- name: Install qemu-hw-usb-host
+  community.general.apk:
+    name: qemu-hw-usb-host

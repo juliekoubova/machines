@@ -1,0 +1,10 @@
+argument_specs:
+  main:
+    options:
+      ifname:
+        required: yes
+      vlan:
+        type: int
+        required: yes
+      raw_device:
+        required: yes

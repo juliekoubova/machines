@@ -1,0 +1,5 @@
+- hosts: bydlenka.totoro.family
+  become: yes
+  roles:
+    - role: split-dnsmasq
+      interface: eth0

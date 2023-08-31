@@ -1,0 +1,67 @@
+- name: Create /etc/network/interfaces.d
+  ansible.builtin.file:
+    path: /etc/network/interfaces.d
+    state: directory
+
+- name: Source /etc/network/interfaces.d
+  ansible.builtin.lineinfile:
+    path: /etc/network/interfaces
+    line: 'source-directory /etc/network/interfaces.d'
+
+- name: Set APK repositories
+  ansible.builtin.template:
+    src: repositories
+    dest: /etc/apk/repositories
+
+- name: Install packages
+  community.general.apk:
+    update_cache: yes
+    name:
+      - chezmoi
+      - curl
+      - doas
+      - docs
+      - dhcpcd # udhcpc can't do IPv4 and IPv6 at the same time
+      - drill
+      - exa
+      - fzf
+      - git
+      - htop
+      - iputils
+      - jq
+      - man-pages
+      - mandoc
+      - neovim
+      - ripgrep
+      - rsync
+      - shadow
+      - starship
+      - strace
+      - tzdata
+      - zsh
+
+- name: Set timezone
+  ansible.builtin.command:
+    cmd: "setup-timezone -i {{ timezone }}"
+    creates: /etc/localtime
+
+- name: Clear MOTD
+  ansible.builtin.copy:
+    dest: /etc/motd
+    content: ""
+
+- name: Disable root SSH login 
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'PermitRootLogin no'
+    regex: '^#?PermitRootLogin'
+    insertbefore: BOF # first one wins with sshd_config
+  tags: [ ssh ]
+
+- name: Disable SSH password authentication
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'PasswordAuthentication no'
+    regex: '^#?PasswordAuthentication'
+    insertbefore: BOF # first one wins with sshd_config
+  tags: [ ssh ]

@@ -1,0 +1,27 @@
+# {{ ansible_managed }}
+
+{% if user %}
+user="{{ user }}"
+{% endif %}
+
+smp_cpus="{{ cpus }}"
+memory="{{ memory }}"
+
+vnc_listen="127.0.0.1"
+vnc_display=0
+
+net0="{{ net0 }}"
+{% if net0 == 'bridge' %}
+net0_br="{{ net0_br }}"
+{% endif %}
+
+disk0_file="{{ disk0_file }}"
+disk0_format="{{ disk0_format }}"
+
+extra_args=" \
+  -machine q35 \
+{% if ovmf %}
+  -drive 'if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd' \
+  -drive 'if=pflash,format=raw,file={{ ovmf_vars }}' \
+{% endif %}
+  {{ extra_args }}"

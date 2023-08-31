@@ -1,0 +1,32 @@
+- name: Install bash
+  community.general.apk:
+    name: bash
+
+- name: Download zbm-kcl
+  ansible.builtin.get_url:
+    dest: /usr/local/bin/zbm-kcl
+    mode: '755'
+    url: https://get.zfsbootmenu.org/zbm-kcl
+
+- name: Download ZFS Boot Menu
+  ansible.builtin.get_url:
+    dest: /root/zfsbootmenu.efi
+    url: https://get.zfsbootmenu.org/efi
+  register: zbm_efi
+
+- when: zbm_efi.changed
+  name: Modify ZBM to select correct root pool
+  ansible.builtin.shell:
+    cmd: >
+      zbm-kcl /root/zfsbootmenu.efi  \
+        -r zbm.prefer  \
+        -a 'zbm.prefer="{{ zfs_root_pool }}!!"' \
+        -o '{{ item }}/efi/boot/bootx64.efi'
+  loop: "{{ boot_partitions }}"
+
+- name: Set kernel command line
+  community.general.zfs:
+    name: "{{ zfs_root_dataset }}"
+    state: present
+    extra_zfs_properties:
+      "org.zfsbootmenu:commandline": "{{ kernel_cmdline }}"

@@ -1,0 +1,41 @@
+- name: Traefik container
+  containers.podman.podman_container:
+    image: traefik
+    name: traefik
+    command: >
+      --accesslog=true
+      --api.dashboard=true
+      --api.insecure=true
+      --providers.docker=true
+      --providers.docker.endpoint=unix:///var/run/docker.sock
+      --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+      --certificatesresolvers.letsencrypt.acme.email={{ letsencrypt_email }}
+      --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      --entrypoints.web.address=:80
+      --entrypoints.web.http.redirections.entrypoint.to=websecure
+      --entrypoints.web.http.redirections.entrypoint.scheme=https
+      --entrypoints.websecure.address=:443
+      --entrypoints.websecure.http.tls=true
+      --entrypoints.websecure.http.tls.certResolver=letsencrypt
+      --entrypoints.websecure.http.tls.domains[0].main=bydlenka.totoro.family
+      --entrypoints.websecure.http.tls.domains[1].main=jellyfin.totoro.family
+      --entrypoints.websecure.http.tls.domains[2].main=tapir.totoro.family
+    env:
+      CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
+      CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_dns_api_token }}"
+    restart_policy: always
+    publish:
+      - '80:80/tcp'
+      - '443:443/tcp'
+      - '443:443/udp'
+    mount:
+      - 'type=bind,source=/run/podman/podman.sock,destination=/var/run/docker.sock'
+    volume:
+      - certs:/letsencrypt
+    label:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: Host(`bydlenka.totoro.family`)
+      traefik.http.routers.dashboard.entrypoints: websecure
+      traefik.http.routers.dashboard.service: api@internal
+

@@ -1,0 +1,14 @@
+- name: Install dnsmasq
+  community.general.apk:
+    name: dnsmasq-dnssec
+
+- name: Configure dnsmasq
+  ansible.builtin.template:
+    dest: /etc/dnsmasq.d/totoro.conf
+    src: dnsmasq.conf.j2
+
+- name: Start and enable dnsmasq
+  ansible.builtin.service:
+    name: dnsmasq
+    state: started
+    enabled: yes

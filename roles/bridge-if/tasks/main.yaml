@@ -1,0 +1,9 @@
+- name: package
+  community.general.apk:
+    name: bridge
+
+- name: Create bridge interface
+  ansible.builtin.template:
+    src: interface.j2
+    dest: "/etc/network/interfaces.d/{{ ifname }}"
+

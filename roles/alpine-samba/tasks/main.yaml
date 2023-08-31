@@ -1,0 +1,31 @@
+- name: Install packages
+  community.general.apk:
+    update_cache: yes
+    name: [ samba, wsdd ]
+
+- name: /etc/conf.d/samba
+  ansible.builtin.copy:
+    dest: /etc/conf.d/samba
+    content: |
+      daemon_list="smbd"
+      smbd_options="-D"
+
+- name: /etc/samba/smb.conf
+  ansible.builtin.template:
+    dest: /etc/samba/smb.conf
+    src: smb.conf.j2
+  register: smbconf
+
+- name: Stop samba
+  ansible.builtin.service:
+    name: samba
+    state: stopped
+  when: smbconf.changed
+
+- name: "Enable and start services"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop: [ samba, wsdd ]
+

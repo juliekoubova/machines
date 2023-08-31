@@ -1,0 +1,11 @@
+argument_specs:
+  main:
+    options:
+      data_dir:
+        required: yes
+        type: path
+      media_dir:
+        required: yes
+        type: path
+
+

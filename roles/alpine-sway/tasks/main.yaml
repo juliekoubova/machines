@@ -1,0 +1,76 @@
+- name: Setup XDG_RUNTIME_DIR
+  ansible.builtin.copy:
+    dest: /etc/profile.d/julie-xdg-runtime-dir.sh
+    src: julie-xdg-runtime-dir.sh
+
+- name: Install packages
+  community.general.apk:
+    name: 
+      - capitaine-cursors
+      - chromium
+      - dbus
+      - foot
+      - firefox
+      - font-awesome
+      - font-cascadia-code-nerd
+      - font-dejavu
+      - font-inconsolata
+      - font-noto
+      - font-noto-cjk 
+      - font-noto-emoji
+      - font-noto-extra
+      - foot
+      - gvfs-smb
+      - mesa-dri-gallium
+      - mesa-va-gallium
+      - sway
+      - swaybg
+      - swayidle
+      - swaylock
+      - seatd
+      - thunar
+      - waybar
+      - wl-clipboard
+      - wlr-randr
+      - wvkbd
+      - xwayland
+      - zzz
+
+- name: "Start services"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - dbus
+    - seatd
+
+- name: Add users to groups
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: yes
+    groups: [ audio, input, seat, video ]
+  loop: "{{ sway_users }}"
+
+- name: Install scripts
+  ansible.builtin.copy:
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+    src: "{{ item }}"
+  loop:
+    - swayzzz
+    - zzz-if-no-ssh
+
+- name: Allow doas zzz-if-no-ssh without password
+  ansible.builtin.copy:
+    dest: /etc/doas.d/zzz-if-no-ssh.conf
+    content: "permit nopass :wheel cmd zzz-if-no-ssh\n"
+
+- name: Suspend when power button pressed
+  ansible.builtin.copy:
+    dest: /etc/acpi/PWRF/00000080
+    mode: 0755
+    content: |
+      #!/bin/sh
+      exec swayzzz
+

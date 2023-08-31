@@ -1,0 +1,9 @@
+argument_specs:
+  main:
+    options:
+      ifname:
+        required: yes
+      bridge_ports:
+        type: list
+        elements: str
+        required: yes

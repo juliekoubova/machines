@@ -1,0 +1,7 @@
+{#
+# vim: set noexpandtab 
+#}
+# {{ ansible_managed }}
+auto {{ ifname }}
+iface {{ ifname }}
+	bridge-ports {{ bridge_ports | join(' ') }}

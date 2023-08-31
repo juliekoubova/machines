@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+
+# Never forward addresses in the non-routed address spaces.
+bogus-priv
+
+# Enable DNSSEC validation and caching:
+# (Requires dnsmasq-dnssec package to be installed)
+conf-file=/usr/share/dnsmasq/trust-anchors.conf
+dnssec
+
+# Don't read /etc/resolv.conf or any other file
+no-resolv
+
+interface-name={{ inventory_hostname_short }},{{ interface }}
+interface-name={{ inventory_hostname_short }}.{{ internal_domain }},{{ interface }}
+
+# Add other name servers here, with domain specs if they are for
+# non-public domains.
+server=//{{ internal_ns }}
+server=/{{ internal_domain }}/{{ internal_ns }}
+rev-server={{ internal_subnet_ipv4 }},{{ internal_ns }}
+rev-server={{ internal_subnet_ipv6 }},{{ internal_ns }}
+
+{% for ns in external_ns %}
+server={{ ns }}
+{% endfor %}
+
+interface={{ interface }}
+
+{% for cname, target in cnames.items() %}
+cname={{ cname }},{{ cname }}.{{ internal_domain }},{{ target }}
+{% endfor %}
+
+# For debugging purposes, log each DNS query as it passes through
+# dnsmasq.
+#log-queries
+

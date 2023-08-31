@@ -1,0 +1,28 @@
+- hosts: raptorek
+  become: yes
+  roles:
+    - role: alpine-base
+      alpine_release: edge
+
+    - role: alpine-physical
+      consolefont: ter-124b.psf.gz
+
+    - role: alpine-samba
+
+    - role: alpine-sway
+      sway_users: [ julie ]
+
+        #- role: haos-vm
+        # - role: postgresql
+
+  tasks:
+    - name: Install firmware
+      community.general.apk:
+        name:
+          - linux-firmware-amdgpu
+          - linux-firmware-intel
+
+    - name: Configure mkinitfs
+      ansible.builtin.copy:
+        dest: /etc/mkinitfs/mkinitfs.conf
+        content: 'features="base keymap kms nvme usb zfs zfshost"'

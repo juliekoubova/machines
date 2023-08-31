@@ -1,0 +1,55 @@
+- name: Install packages
+  community.general.apk:
+    name:
+      - dosfstools
+      - e2fsprogs
+      - efibootmgr
+      - font-terminus
+      - lm-sensors
+      - lsblk
+      - mingetty
+      - openntpd
+      - openssh
+      - pciutils
+      - usbutils
+      - sfdisk
+
+- name: Setup udev
+  ansible.builtin.command:
+    cmd: setup-devd -C udev
+    creates: /etc/runlevels/sysinit/udev
+
+- name: Install zfs packages
+  community.general.apk:
+    name:
+      - zfs-udev
+      - zfs-lts
+      - zfs
+  when: zfs 
+
+- name: Use mingetty
+  ansible.builtin.template:
+    dest: /etc/inittab
+    src: inittab
+
+- name: Select console font
+  ansible.builtin.lineinfile:
+    dest: /etc/conf.d/consolefont
+    line: 'consolefont="{{ consolefont }}"'
+    regex: '^consolefont='
+  when: consolefont
+
+- name: Enable and start console font on boot
+  ansible.builtin.service:
+    name: consolefont
+    runlevel: boot
+    enabled: yes
+
+- name: Enable and start services
+  ansible.builtin.service:
+    name: "{{ item.name }}"
+    runlevel: "{{ item.runlevel | default('default') }}"
+    enabled: yes
+    state: started
+  loop: "{{ services }}"
+

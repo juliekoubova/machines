@@ -1,0 +1,41 @@
+- name: Install postgresql
+  community.general.apk:
+    name: postgresql
+
+- name: Ensure data dataset
+  community.general.zfs:
+    name: "{{ zfs_data_pool }}{{ data_dir }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ data_dir }}"
+
+- name: Ensure log dataset
+  community.general.zfs:
+    name: "{{ zfs_data_pool }}{{ data_dir }}/pg_wal"
+    state: present
+
+- name: Ensure postgres ownership
+  ansible.builtin.file:
+    dest: "{{ data_dir }}"
+    owner: postgres
+    group: postgres
+    mode: 'u=rwX,g=,o='
+    recurse: yes
+
+- name: Configure postgresql
+  ansible.builtin.lineinfile:
+    dest: /etc/conf.d/postgresql
+    state: "{{ 'present' if item.value else 'absent' }}"
+    line: "{{ item.key }}=\"{{ item.value }}\""
+    regex: "^\\s*{{ item.key }}\\s*="
+  loop:
+    - { key: conf_dir, value: "{{ data_dir }}" }
+    - { key: data_dir, value: "{{ data_dir }}" }
+    - { key: pg_version, value: 15 }
+
+- name: Enable and start postgresql
+  ansible.builtin.service:
+    name: postgresql
+    enabled: yes
+    state: started
+    

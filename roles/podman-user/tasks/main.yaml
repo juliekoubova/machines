@@ -1,0 +1,12 @@
+- name: Get user id
+  ansible.builtin.user:
+    name: "{{ podman_user }}"
+  register: user_info
+
+- name: Ensure subuid and subgid
+  ansible.builtin.lineinfile:
+    dest: "/etc/{{ item }}"
+    line: "{{ podman_user }}:{{ user_info.uid * 100000 }}:100000"
+  loop:
+    - subgid
+    - subuid

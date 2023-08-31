@@ -1,0 +1,10 @@
+- hosts: prusheenmon
+  become: yes
+  roles:
+    - role: rpi-bootloader
+    - role: prusamon
+    - role: ssh-user
+      username: tereza
+      groups: wheel
+      github_username: the-ress
+

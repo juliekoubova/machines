@@ -1,0 +1,45 @@
+- name: "qBittorrent data dataset"
+  community.general.zfs:
+    name: "{{ zfs_data_pool }}{{ data_dir }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ data_dir }}"
+
+- name: "Downloads group"
+  ansible.builtin.group:
+    name: "downloads"
+    system: no
+  register: group
+
+- name: "qBittorrent user"
+  ansible.builtin.user:
+    name: "qbittorrent"
+    groups: "downloads"
+    append: yes
+    system: yes
+    home: "{{ data_dir }}"
+  register: user
+
+- name: "qBittorrent container"
+  containers.podman.podman_container:
+    name: "qbittorrent"
+    image: "ghcr.io/hotio/qbittorrent"
+    restart_policy: always
+    cmd_args: --no-healthcheck # fuck systemd timers
+    env:
+      PUID: "{{ user.uid }}"
+      PGID: "{{ group.gid }}"
+      TZ: "{{ timezone }}"
+      UMASK: '002'
+      WEBUI_PORT: 8080
+    network: "{{ podman_ipv6_network | default('podman') }}"
+    volume:
+      - /data/qbittorrent:/config
+      - /data/downloads:/downloads
+    publish:
+      - 8080:8080
+    label:
+      traefik.http.routers.tapir.rule: Host(`tapir.totoro.family`) 
+      traefik.http.routers.tapir.entrypoints: websecure
+      traefik.http.services.tapir.loadbalancer.server.port: 8080
+

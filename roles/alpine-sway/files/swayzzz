@@ -1,0 +1,8 @@
+#!/bin/sh
+pids=`pgrep swayidle`
+if [ -n "${pids}" ]; then
+  exec kill -SIGUSR1 ${pids}
+else
+  exec doas zzz
+fi
+

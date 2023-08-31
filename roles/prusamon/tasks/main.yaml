@@ -1,0 +1,22 @@
+- name: Install packages
+  community.general.apk:
+    name: [ curl, jq, vlc ]
+    
+- name: Get user info
+  ansible.builtin.user:
+    name: "{{ target_user }}"
+  register: user_info
+
+- name: Copy files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ user_info.home }}/{{ item.dest | default(item.src) }}"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "{{ item.mode | default('644') }}"
+  loop:
+    - { src: dot_profile, dest: .profile }
+    - { src: dot_config/, dest: .config/ }
+    - { src: run-videos.sh, mode: '755' }
+    - { src: lcd.sh, mode: '755' }
+

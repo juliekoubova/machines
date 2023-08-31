@@ -1,0 +1,9 @@
+- name: Load kernel module
+  community.general.modprobe:
+    name: "{{ module }}"
+    state: present
+- name: Ensure module in /etc/modules
+  ansible.builtin.lineinfile:
+    dest: /etc/modules
+    line: "{{ module }}"
+

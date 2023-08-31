@@ -1,0 +1,8 @@
+- name: Install QEMU
+  community.general.apk:
+    name: 
+      - ovmf #@community3.17
+      - qemu-img
+      - qemu-openrc
+      - qemu-system-x86_64
+

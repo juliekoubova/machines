@@ -1,0 +1,10 @@
+#!/bin/sh
+cd "$(dirname $0)"
+
+ansible-playbook \
+  --connection local \
+  --inventory hosts \
+  --limit "$(hostname)" \
+  site.yaml \
+  ${args} \
+  "$@"

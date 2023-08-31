@@ -1,0 +1,9 @@
+- hosts: antigone
+  become: yes
+  roles:
+    - role: alpine-base
+    - role: alpine-physical
+      autologin: julie
+      consolefont: ter-132b.psf.gz
+    - role: alpine-sway
+      sway_users: [ julie ]

@@ -1,0 +1,14 @@
+- name: "Allow bridge {{ ifname }}"
+  ansible.builtin.lineinfile:
+    dest: /etc/qemu/bridge.conf
+    owner: root
+    group: qemu
+    mode: '640'
+    line: 'allow {{ ifname }}'
+
+# workaround for https://github.com/jirutka/qemu-openrc/issues/25
+- name: Ensure qemu user is member of qemu group
+  ansible.builtin.user:
+    append: yes
+    groups: qemu
+    user: qemu

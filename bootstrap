@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+if [ `id -u` != 0 ]; then
+  echo must be root >&2
+  exit 1
+fi
+
+apk add curl doas openssh python3 
+
+if ! grep -Eq ^ansible: /etc/passwd; then
+  adduser ansible -D -G wheel -u 2000 
+  # unlock the user, but don't allow password login
+  echo 'ansible:*' | chpasswd -e 
+fi
+
+cat >/etc/doas.d/doas.conf <<EOF 
+permit persist :wheel
+permit nopass ansible
+EOF
+
+su ansible -c '
+  set -ex
+  mkdir -p -m 700 "$HOME/.ssh";
+  curl https://github.com/juliekoubova.keys -o "$HOME/.ssh/authorized_keys";
+  chmod 644 "$HOME/.ssh/authorized_keys"'
+
+rc-update add sshd
+rc-service sshd start

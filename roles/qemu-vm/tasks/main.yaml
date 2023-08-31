@@ -1,0 +1,16 @@
+- name: "Create qemu.{{ vmname }}"
+  ansible.builtin.file:
+    src: /etc/init.d/qemu
+    dest: "/etc/init.d/qemu.{{ vmname }}"
+    state: link
+
+- name: "Configure qemu.{{ vmname }}"
+  ansible.builtin.template:
+    src: confd.j2
+    dest: "/etc/conf.d/qemu.{{ vmname }}"
+
+- name: "Enable and start qemu.{{ vmname }}"
+  ansible.builtin.service:
+    name: "qemu.{{ vmname }}"
+    enabled: yes
+    state: started

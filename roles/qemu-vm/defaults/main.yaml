@@ -1,0 +1,6 @@
+cpus: 2
+memory: 2G
+net0: ""
+extra_args: ""
+user: ""
+ovmf: yes

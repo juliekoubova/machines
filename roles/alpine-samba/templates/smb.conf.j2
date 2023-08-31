@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+[global]
+log file = /var/log/samba/%m.log
+max log size = 256
+server role = standalone server
+server string = {{ server_string | d(inventory_hostname) }}
+workgroup = {{ samba_workgroup }}
+
+[homes]
+comment = Home Directories
+browseable = no
+writable = yes
+
+{% for share in shares %}
+[{{ share.name }}]
+{% for key, value in share.items() %}
+{% if key != 'name' %}
+{{ key }} = {{ value }}
+{% endif %}
+{% endfor %}
+{% endfor %}

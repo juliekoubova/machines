@@ -1,0 +1,11 @@
+usercfg_dtoverlays:
+  - vc4-kms-v3d
+usercfg_vars:
+  arm_freq: 
+  config_hdmi_boost: 
+  disable_overscan: 1
+  gpu_freq: 
+
+
+    
+

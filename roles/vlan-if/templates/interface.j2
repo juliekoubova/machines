@@ -1,0 +1,8 @@
+{#
+# vim: set noexpandtab 
+#}
+# {{ ansible_managed }}
+auto {{ ifname }}
+iface {{ ifname }}
+	vlan-id {{ vlan }}
+	vlan-raw-device {{ raw_device }}

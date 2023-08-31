@@ -1,0 +1,21 @@
+- name: Ensure vfio.modules in mkinitfs features.d
+  ansible.builtin.copy:
+    src: vfio.modules
+    dest: /etc/mkinitfs/features.d/vfio.modules
+
+- name: Add vfio soft deps
+  ansible.builtin.template:
+    src: modprobed.j2
+    dest: /etc/modprobe.d/vfio.conf
+  register: vfio_softdeps
+
+- name: Configure mkinitfs.conf
+  ansible.builtin.copy:
+    dest: /etc/mkinitfs/mkinitfs.conf
+    content: 'features="{{ mkinitfs_features }}"'
+  register: conf
+
+- name: Rebuild initramfs
+  when: vfio_softdeps.changed or conf.changed
+  ansible.builtin.shell:
+    cmd: /sbin/mkinitfs
