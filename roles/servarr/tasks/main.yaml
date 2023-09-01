@@ -74,7 +74,6 @@
       TZ: "{{ timezone }}"
       UMASK: '002'
       WEBUI_PORT: 8080
-    network: "{{ podman_ipv6_network | default('podman') }}"
     volume:
       - "{{ data_dir }}/{{ torrent_config }}:/config"
       - "{{ torrent_dir }}:{{ torrent_dir }}"
@@ -97,7 +96,6 @@
 #      TZ: "{{ timezone }}"
 #      UMASK: '002'
 #      WEBUI_PORT: 8080
-#    network: "{{ podman_ipv6_network | default('podman') }}"
 #    volume:
 #      - "{{ data_dir }}/{{ sonarr_config }}:/config"
 #      - "{{ data_dir }}:{{ data_dir }}"

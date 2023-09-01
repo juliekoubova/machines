@@ -4,3 +4,4 @@ net0: ""
 extra_args: ""
 user: ""
 ovmf: yes
+shutdown_timeout:

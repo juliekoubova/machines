@@ -11,9 +11,6 @@ dnssec
 # Don't read /etc/resolv.conf or any other file
 no-resolv
 
-interface-name={{ inventory_hostname_short }},{{ interface }}
-interface-name={{ inventory_hostname_short }}.{{ internal_domain }},{{ interface }}
-
 # Add other name servers here, with domain specs if they are for
 # non-public domains.
 server=//{{ internal_ns }}
@@ -25,9 +22,11 @@ rev-server={{ internal_subnet_ipv6 }},{{ internal_ns }}
 server={{ ns }}
 {% endfor %}
 
-interface={{ interface }}
+{% for host, address in dnsmasq_host_records.items() %}
+host-record={{ host }},{{ host }}.{{ internal_domain }},{{ address }}
+{% endfor %}
 
-{% for cname, target in cnames.items() %}
+{% for cname, target in dnsmasq_cnames.items() %}
 cname={{ cname }},{{ cname }}.{{ internal_domain }},{{ target }}
 {% endfor %}
 

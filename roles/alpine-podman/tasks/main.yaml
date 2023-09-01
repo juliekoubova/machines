@@ -41,10 +41,3 @@
     enabled: yes
     state: started
 
-- name: Create Podman IPv6 network
-  containers.podman.podman_network:
-    name: "{{ podman_ipv6_network }}"
-    ipv6: yes
-    disable_dns: yes
-  tags: [ podman ]
-  when: podman_ipv6_network

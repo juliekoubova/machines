@@ -29,6 +29,9 @@ argument_specs:
         type: str
         choices: [ qcow2, raw ]
         required: yes
+      shutdown_timeout:
+        type: int
+        default: 0
       user:
         type: str
         default: ''

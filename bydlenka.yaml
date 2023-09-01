@@ -64,6 +64,7 @@
       ovmf: yes
       ovmf_vars: /data/vm/haos/ovmf_vars.fd
       extra_args: "-device vfio-pci,host=02:00.0"
+      shutdown_timeout: 180
       tags: [ haos ]
 
     - role: ssh-user

@@ -18,6 +18,9 @@ net0_br="{{ net0_br }}"
 disk0_file="{{ disk0_file }}"
 disk0_format="{{ disk0_format }}"
 
+{% if shutdown_timeout %}
+shutdown_timeout={{ shutdown_timeout }}
+{% endif %}
 extra_args=" \
   -machine q35 \
 {% if ovmf %}

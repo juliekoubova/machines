@@ -6,6 +6,13 @@
   ansible.builtin.template:
     dest: /etc/dnsmasq.d/totoro.conf
     src: dnsmasq.conf.j2
+  register: config
+
+- name: Stop dnsmasq
+  when: config.changed
+  ansible.builtin.service:
+    name: dnsmasq
+    state: stopped
 
 - name: Start and enable dnsmasq
   ansible.builtin.service:
