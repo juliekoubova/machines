@@ -22,6 +22,7 @@
       --entrypoints.websecure.http.tls.domains[1].main=jellyfin.totoro.family
       --entrypoints.websecure.http.tls.domains[2].main=qbittorrent.totoro.family
     env:
+      TZ: "{{ timezone }}"
       CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"
       CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_dns_api_token }}"
     restart_policy: always
@@ -29,6 +30,10 @@
       - '80:80/tcp'
       - '443:443/tcp'
       - '443:443/udp'
+      - '[::]:80:80/tcp'
+      - '[::]:443:443/tcp'
+      - '[::]:443:443/udp'
+    network: "{{ podman_ipv6_network | default('podman') }}"
     mount:
       - 'type=bind,source=/run/podman/podman.sock,destination=/var/run/docker.sock'
     volume:
