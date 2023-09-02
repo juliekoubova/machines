@@ -73,7 +73,7 @@
       user_groups: [ wheel ]
       tags: [ tereza ]
 
-    - role: split-dnsmasq
+    - role: dnsmasq
       interface: eth0
       tags: [ dnsmasq ]
 

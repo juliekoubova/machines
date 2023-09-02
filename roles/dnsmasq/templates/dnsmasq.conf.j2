@@ -11,6 +11,9 @@ dnssec
 # Don't read /etc/resolv.conf or any other file
 no-resolv
 
+# Default is max 150 concurrent requests
+dns-forward-max={{ dnsmasq_forward_max | default(1000) }}
+
 # Add other name servers here, with domain specs if they are for
 # non-public domains.
 server=//{{ internal_ns }}
@@ -29,6 +32,9 @@ host-record={{ host }},{{ host }}.{{ internal_domain }},{{ address }}
 {% for cname, target in dnsmasq_cnames.items() %}
 cname={{ cname }},{{ cname }}.{{ internal_domain }},{{ target }}
 {% endfor %}
+
+# Include all files in a directory which end in .conf
+conf-dir=/etc/dnsmasq.d/,*.conf
 
 # For debugging purposes, log each DNS query as it passes through
 # dnsmasq.

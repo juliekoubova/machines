@@ -37,6 +37,7 @@
       - shadow
       - starship
       - strace
+      - tcpdump
       - tzdata
       - zsh
 

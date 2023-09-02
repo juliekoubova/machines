@@ -4,7 +4,7 @@
 
 - name: Configure dnsmasq
   ansible.builtin.template:
-    dest: /etc/dnsmasq.d/totoro.conf
+    dest: /etc/dnsmasq.conf
     src: dnsmasq.conf.j2
   register: config
 
