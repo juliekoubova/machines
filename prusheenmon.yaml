@@ -1,7 +1,7 @@
 - hosts: prusheenmon
   become: yes
   roles:
-    - role: ansible-base
+    - role: alpine-base
     - role: dhcpcd
     - role: rpi-bootloader
     - role: prusamon
