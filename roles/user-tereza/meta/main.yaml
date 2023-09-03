@@ -1,0 +1,5 @@
+dependencies:
+  - role: ssh-user
+    user: tereza
+    github_usernames: [ the-ress ]
+

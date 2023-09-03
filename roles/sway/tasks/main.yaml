@@ -7,32 +7,20 @@
   community.general.apk:
     name: 
       - capitaine-cursors
-      - chromium
       - dbus
       - foot
-      - firefox
-      - font-awesome
-      - font-cascadia-code-nerd
       - font-dejavu
       - font-inconsolata
       - font-noto
       - font-noto-cjk 
       - font-noto-emoji
       - font-noto-extra
-      - foot
-      - gvfs-smb
       - mesa-dri-gallium
       - mesa-va-gallium
       - sway
-      - swaybg
-      - swayidle
-      - swaylock
       - seatd
-      - thunar
-      - waybar
       - wl-clipboard
       - wlr-randr
-      - wvkbd
       - xwayland
       - zzz
 
@@ -49,7 +37,7 @@
   ansible.builtin.user:
     name: "{{ item }}"
     append: yes
-    groups: [ audio, input, plugdev, seat, video ]
+    groups: [ audio, input, seat, video ]
   loop: "{{ sway_users }}"
 
 - name: Install scripts
@@ -74,8 +62,3 @@
       #!/bin/sh
       exec swayzzz
 
-- name: U2F udev rules
-  ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/Yubico/libfido2/main/udev/70-u2f.rules
-    dest: /etc/udev/rules.d/70-u2f.rules
-    

@@ -12,8 +12,7 @@
     - role: alpine-sway
       sway_users: [ julie ]
 
-        #- role: haos-vm
-        # - role: postgresql
+    - role: utils
 
   tasks:
     - name: Install firmware

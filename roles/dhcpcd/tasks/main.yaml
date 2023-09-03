@@ -1,0 +1,10 @@
+- name: Install packages
+  community.general.apk:
+    name:
+      - dhcpcd # udhcpc can't do IPv4 and IPv6 at the same time
+
+- name: Configure dhcpcd
+  ansible.builtin.template:
+    dest: /etc/dhcpcd.conf
+    src: dhcpcd.conf.j2
+  tags: [ dhcpcd ]

@@ -1,0 +1,4 @@
+- hosts: backup-ns.totoro.family
+  become: yes
+  roles:
+    - role: dhcpcd

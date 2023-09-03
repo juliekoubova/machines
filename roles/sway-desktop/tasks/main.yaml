@@ -1,0 +1,30 @@
+- name: Install packages
+  community.general.apk:
+    name: 
+      - chromium
+      - firefox
+      - font-awesome
+      - font-cascadia-code-nerd
+      - font-dejavu
+      - font-inconsolata
+      - font-noto
+      - font-noto-cjk 
+      - font-noto-emoji
+      - font-noto-extra
+      - gvfs-smb
+      - libfido2
+      - swaybg
+      - swayidle
+      - swaylock
+      - thunar
+      - waybar
+      - wlvncc
+      - wvkbd
+
+- name: Add users to plugdev group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: yes
+    groups: [ plugdev ]
+  loop: "{{ sway_users }}"
+

@@ -1,0 +1,28 @@
+- name: Install packages
+  community.general.apk:
+    update_cache: yes
+    name:
+      - chezmoi
+      - curl
+      - doas
+      - docs
+      - drill
+      - exa
+      - fzf
+      - git
+      - htop
+      - iputils # ping without root
+      - jq
+      - man-pages
+      - mandoc
+      - neovim
+      - ripgrep
+      - rsync
+      - shadow
+      - starship
+      - strace
+      - tcpdump
+      - tzdata
+      - zsh
+
+

@@ -4,6 +4,11 @@
     - role: alpine-base
       alpine_release: v3.18
 
+    - role: user-ansible
+    - role: user-julie
+    - role: user-tereza
+
+    - role: dhcpcd
     - role: alpine-physical
 
     - role: alpine-podman
@@ -69,7 +74,7 @@
 
     - role: ssh-user
       user: tereza
-      github_username: the-ress
+      github_usernames: [ the-ress ]
       user_groups: [ wheel ]
       tags: [ tereza ]
 
@@ -85,11 +90,3 @@
     - role: traefik
       tags: [ podman, servarr, traefik ]
     
-  tasks:
-    - name: "Allow Tereza to ansible"
-      ansible.posix.authorized_key:
-        user: ansible
-        key: "https://github.com/the-ress.keys"
-      tags: [ ssh, tereza ]
-
-

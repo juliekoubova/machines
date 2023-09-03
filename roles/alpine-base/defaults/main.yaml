@@ -1,7 +1,5 @@
 alpine_mirror: https://dl-cdn.alpinelinux.org/alpine
 alpine_release: "{{ 'edge' if postmarketos else 'v3.18' }}"
-dhcpcd_private: true
-dhcpcd_slaac_token: ''
 postmarketos: false
 postmarketos_mirror: http://mirror.postmarketos.org/postmarketos
 postmarketos_release: master

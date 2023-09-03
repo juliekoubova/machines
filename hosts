@@ -1,10 +1,12 @@
 [alpine]
 antigone postmarketos=yes zfs=no
+backup-ns.totoro.family zfs=no
 bydlenka.totoro.family
 raptorek 
 prusheenmon
 
 [totoro]
+backup-ns.totoro.family
 bydlenka.totoro.family
 raptorek
 prusheenmon

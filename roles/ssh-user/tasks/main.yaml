@@ -2,16 +2,18 @@
   ansible.builtin.user:
     name: "{{ user }}"
     shell: "{{ shell | default('/bin/sh') }}"
-    groups: "{{ user_groups }}"
+    group: "{{ user_group | default('') }}"
+    groups: "{{ user_groups | default([]) }}"
     password: "*"
     update_password: on_create
     append: yes
+    system: "{{ system | default(false) }}"
   tags: [ ssh ]
 
-- name: "Download authorized_keys from GitHub {{ github_username }}"
+- name: "Download authorized_keys from GitHub for user {{ user }}"
   ansible.posix.authorized_key:
     user: "{{ user }}"
-    key: "https://github.com/{{ github_username }}.keys"
-  when: github_username
+    key: "https://github.com/{{ item }}.keys"
+  loop: "{{ github_usernames }}"
   tags: [ ssh ]
 

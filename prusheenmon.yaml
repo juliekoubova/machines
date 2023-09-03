@@ -3,8 +3,9 @@
   roles:
     - role: rpi-bootloader
     - role: prusamon
+    - role: user-ansible
     - role: ssh-user
-      username: tereza
+      user: tereza
       groups: wheel
-      github_username: the-ress
+      github_usernames: [ the-ress ]
 
