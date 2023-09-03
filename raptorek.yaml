@@ -1,4 +1,4 @@
-- hosts: raptorek
+- hosts: raptorek.totoro.family
   become: yes
   roles:
     - role: alpine-base
@@ -13,6 +13,7 @@
       sway_users: [ julie ]
 
     - role: user-julie
+    - role: user-ansible
 
     - role: podman-user
       podman_user: julie

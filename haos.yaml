@@ -1,4 +1,0 @@
-- hosts: raptorek
-  become: yes
-  roles:
-    - role: haos-vm

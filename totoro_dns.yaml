@@ -1,0 +1,7 @@
+- hosts: totoro_dns
+  roles:
+    - role: dhcpcd
+    - role: dnsmasq
+    - role: user-ansible
+    - role: user-julie
+    - role: user-tereza

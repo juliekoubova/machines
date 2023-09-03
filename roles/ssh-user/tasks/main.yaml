@@ -1,13 +1,12 @@
 - name: "Create user {{ user }}"
   ansible.builtin.user:
     name: "{{ user }}"
-    shell: "{{ shell | default('/bin/sh') }}"
-    group: "{{ user_group | default('') }}"
-    groups: "{{ user_groups | default([]) }}"
+    shell: "{{ shell | default(omit) }}"
+    group: "{{ user_group | default(omit) }}"
+    uid: "{{ uid | default(omit) }}"
     password: "*"
     update_password: on_create
-    append: yes
-    system: "{{ system | default(false) }}"
+    system: "{{ system | default(omit) }}"
   tags: [ ssh ]
 
 - name: "Download authorized_keys from GitHub for user {{ user }}"

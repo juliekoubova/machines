@@ -1,4 +1,4 @@
-- hosts: bydlenka.totoro.family
+- hosts: bydlenka
   become: yes
   roles:
     - role: alpine-base
@@ -71,12 +71,6 @@
       extra_args: "-device vfio-pci,host=02:00.0"
       shutdown_timeout: 180
       tags: [ haos ]
-
-    - role: ssh-user
-      user: tereza
-      github_usernames: [ the-ress ]
-      user_groups: [ wheel ]
-      tags: [ tereza ]
 
     - role: dnsmasq
       interface: eth0

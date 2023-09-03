@@ -1,0 +1,5 @@
+zfs: yes
+zfs_root_pool: zroot
+zfs_root_dataset: zroot/ROOT/alpine
+zfs_data_pool: zroot
+

@@ -1,6 +1,8 @@
 dependencies:
   - role: ssh-user
     user: ansible
-    github_usernames: [ juliekoubova, the-ress ]
+    user_group: wheel
+    github_usernames: "{{ ansible_user_ssh_keys }}"
     system: true
+    uid: 2000
 

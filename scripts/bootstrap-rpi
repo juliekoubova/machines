@@ -302,7 +302,7 @@ usage() {
    -d  The SD card device
    -h  Show this help
    -o  Only create the .apkovl file
-   -s  System disk mode installation
+   -s  System disk mode installation on first boot
 
 EOF
   exit $1
