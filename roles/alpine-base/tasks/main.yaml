@@ -19,7 +19,7 @@
     name:
       - curl
       - doas
-      - dhcpcd # udhcpc can't do IPv4 and IPv6 at the same time
+      - iputils # ping without root
 
 - name: Set timezone
   ansible.builtin.command:

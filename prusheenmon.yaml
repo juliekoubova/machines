@@ -1,11 +1,10 @@
 - hosts: prusheenmon
   become: yes
   roles:
+    - role: ansible-base
+    - role: dhcpcd
     - role: rpi-bootloader
     - role: prusamon
     - role: user-ansible
-    - role: ssh-user
-      user: tereza
-      groups: wheel
-      github_usernames: [ the-ress ]
-
+    - role: user-julie
+    - role: user-tereza

@@ -9,10 +9,13 @@
 
     - role: alpine-samba
 
-    - role: alpine-sway
+    - role: sway-desktop
       sway_users: [ julie ]
 
-    - role: utils
+    - role: user-julie
+
+    - role: podman-user
+      podman_user: julie
 
   tasks:
     - name: Install firmware

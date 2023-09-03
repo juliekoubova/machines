@@ -1,7 +1,0 @@
-dependencies:
-  - role: ssh-user
-    user: julie
-    user_groups: wheel
-    shell: /bin/zsh
-    github_username: juliekoubova
-
