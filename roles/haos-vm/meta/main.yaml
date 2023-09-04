@@ -1,31 +1,33 @@
 dependencies:
   - role: vlan-if
-    ifname: eth0-things
-    vlan: 8
-    raw_device: eth0
+    vars:
+      ifname: eth0-things
+      vlan: 8
+      raw_device: eth0
 
   - role: bridge-if
-    ifname: br-things
-    bridge_ports:
-      - eth0-things
+    vars:
+      ifname: br-things
+      bridge_ports:
+        - eth0-things
 
   - role: qemu-bridge
-    ifname: br-things
-
-  - role: qemu-hw-usb-host
+    vars:
+      ifname: br-things
 
   - role: qemu-vm
-    user: root
-    vmname: haos
-    memory: 16G
-    net0: bridge
-    net0_br: br-things
-    disk0_file: /data/vm/haos/disk0.img
-    disk0_format: raw
-    extra_args: >-
-      -usb
-      -device usb-host,hostbus=1,hostport=7.2
-      -device usb-host,hostbus=1,hostport=7.3
-      -device usb-host,hostbus=1,hostport=7.4
+    vars:
+      user: root
+      vmname: haos
+      memory: 16G
+      net0: bridge
+      net0_br: br-things
+      disk0_file: /data/vm/haos/disk0.img
+      disk0_format: raw
+      ovmf: yes
+      ovmf_vars: /data/vm/haos/ovmf_vars.fd
+      extra_args: "-device vfio-pci,host=02:00.0"
+      shutdown_timeout: 180
+      tags: [ haos ]
 
 

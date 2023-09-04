@@ -12,7 +12,7 @@ comment = Home Directories
 browseable = no
 writable = yes
 
-{% for share in shares %}
+{% for share in samba_shares %}
 [{{ share.name }}]
 {% for key, value in share.items() %}
 {% if key != 'name' %}

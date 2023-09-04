@@ -1,0 +1,15 @@
+- name: "Connect as user {{ item.name }}"
+  changed_when: false
+  failed_when: false
+  register: connect
+  no_log: true
+  ansible.builtin.shell: >
+    smbclient -U '{{ item.name }}:{{ item.password }}' -L localhost
+
+- name: "Set {{ item.name }} passsword"
+  when: "connect.rc != 0"
+  no_log: true
+  changed_when: true
+  ansible.builtin.shell: >
+    (echo '{{ item.password }}'; echo '{{ item.password }}') | \
+    smbpasswd -a -s "{{ item.name }}"

@@ -1,5 +1,4 @@
 - hosts: bydlenka
-  become: yes
   roles:
     - role: alpine-base
       alpine_release: v3.18
@@ -26,54 +25,21 @@
       vfio_softdeps: [ xhci_hcd ]
       tags: [ haos ]
 
-    - role: alpine-samba
-      shares:
-        - name: Media
-          path: /data/servarr/media
-          valid users: '@wheel'
-          write list: '@wheel'
-        - name: Torrents
-          path: /data/servarr/torrents
-          valid users: '@wheel'
-          write list: '@wheel'
+    - role: samba
       tags: [ samba, servarr ]
 
-    - role: vlan-if
-      ifname: eth0-things
-      vlan: 8
-      raw_device: eth0
+    - role: haos-vm
       tags: [ haos ]
 
-    - role: bridge-if
-      ifname: br-things
-      bridge_ports:
-        - eth0-things
-      tags: [ haos ]
-
-    - role: qemu-bridge
-      ifname: br-things
-      tags: [ haos ]
+    - role: haos-backups
+      tags: [ haos, haos-backups ]
+      data_dir: /data/backups/haos
 
     - role: postgresql
       data_dir: /data/postgres15
       tags: [ postgres, haos ]
 
-    - role: qemu-vm
-      user: root
-      vmname: haos
-      memory: 16G
-      net0: bridge
-      net0_br: br-things
-      disk0_file: /data/vm/haos/disk0.img
-      disk0_format: raw
-      ovmf: yes
-      ovmf_vars: /data/vm/haos/ovmf_vars.fd
-      extra_args: "-device vfio-pci,host=02:00.0"
-      shutdown_timeout: 180
-      tags: [ haos ]
-
     - role: dnsmasq
-      interface: eth0
       tags: [ dnsmasq ]
 
     - role: servarr

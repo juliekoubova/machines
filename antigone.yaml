@@ -5,5 +5,5 @@
     - role: alpine-physical
       autologin: julie
       consolefont: ter-132b.psf.gz
-    - role: alpine-sway
+    - role: sway-desktop
       sway_users: [ julie ]

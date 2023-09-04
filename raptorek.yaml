@@ -7,7 +7,7 @@
     - role: alpine-physical
       consolefont: ter-124b.psf.gz
 
-    - role: alpine-samba
+    - role: samba
 
     - role: sway-desktop
       sway_users: [ julie ]

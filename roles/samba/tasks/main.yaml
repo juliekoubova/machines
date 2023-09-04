@@ -29,3 +29,7 @@
     state: started
   loop: [ samba, wsdd ]
 
+- name: Ensure Samba users
+  loop: "{{ samba_users }}"
+  no_log: true
+  ansible.builtin.include_tasks: user.yaml

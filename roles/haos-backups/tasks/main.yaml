@@ -1,0 +1,15 @@
+- name: Ensure haos backups dataset
+  when: zfs
+  community.general.zfs:
+    name: "{{ zfs_data_pool }}{{ data_dir }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ data_dir }}"
+
+- name: Create haos-backups user
+  tags: [ haos ]
+  ansible.builtin.user:
+    name: haos-backups
+    group: wheel
+    system: yes
+    home: "{{ data_dir }}"
