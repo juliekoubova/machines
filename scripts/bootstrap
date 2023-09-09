@@ -8,7 +8,7 @@ fi
 
 if [ `uname` = "FreeBSD" ]; then
   platform=freebsd
-  doasconf=/usr/local/env/doas.conf
+  doasconf=/usr/local/etc/doas.conf
 elif command -v apk 2> /dev/null; then
   platform=alpine
   doasconf=/etc/doas.d/doas.conf
