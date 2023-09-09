@@ -22,7 +22,7 @@ alpine_packages() {
 }
 
 alpine_user() {
-  local username=$1 uid=$2 group=$3
+  local username=$1 group=$2 uid=$3
   adduser -D -G "$group" -u "$uid" "$username" 
   # unlock the user, but don't allow password login
   echo "$username:*" | chpasswd -e 
@@ -38,7 +38,7 @@ freebsd_packages() {
 }
 
 freebsd_user() {
-  local username=$1 uid=$2 group=$3
+  local username=$1 group=$2 uid=$3 
   adduser -D -G "$group" -u "$uid" -w no "$username" 
 }
 
@@ -54,8 +54,8 @@ freebsd_sshd() {
 $platform_packages
 $platform_sshd
 
-if ! grep -Eq "^$username:" /etc/passwd; then
-  $platform_user
+if ! grep -Eq "^ansible:" /etc/passwd; then
+  $platform_user ansible wheel 2000
 fi
 
 cat > "$doasconf" <<EOF 
