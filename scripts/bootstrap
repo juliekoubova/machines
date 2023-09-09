@@ -9,7 +9,7 @@ fi
 if [ `uname` = "FreeBSD" ]; then
   platform=freebsd
   doasconf=/usr/local/etc/doas.conf
-elif command -v apk 2> /dev/null; then
+elif command -v apk > /dev/null; then
   platform=alpine
   doasconf=/etc/doas.d/doas.conf
 else
@@ -17,32 +17,32 @@ else
   exit 1
 fi
 
-alpine_packages() {
+packages_alpine() {
   apk add curl doas openssh python3 
 }
 
-alpine_user() {
+user_alpine() {
   local username=$1 group=$2 uid=$3
   adduser -D -G "$group" -u "$uid" "$username" 
   # unlock the user, but don't allow password login
   echo "$username:*" | chpasswd -e 
 }
 
-alpine_sshd() {
+sshd_alpine() {
   rc-update add sshd
   rc-service sshd start
 }
 
-freebsd_packages() {
+packages_freebsd() {
   pkg install python311 doas curl
 }
 
-freebsd_user() {
+user_freebsd() {
   local username=$1 group=$2 uid=$3 
   adduser -D -G "$group" -u "$uid" -w no "$username" 
 }
 
-freebsd_sshd() {
+sshd_freebsd() {
   if [ `sysrc -n sshd_enable` != "YES" ]; then
     sysrc sshd_enable=YES
   fi
@@ -51,11 +51,11 @@ freebsd_sshd() {
   fi
 }
 
-$platform_packages
-$platform_sshd
+packages_$platform
+sshd_$platform
 
 if ! grep -Eq "^ansible:" /etc/passwd; then
-  $platform_user ansible wheel 2000
+  user_$platform ansible wheel 2000
 fi
 
 cat > "$doasconf" <<EOF 
@@ -66,6 +66,6 @@ EOF
 su ansible -c '
   set -ex
   mkdir -p -m 700 "$HOME/.ssh";
-  curl https://github.com/juliekoubova.keys -o "$HOME/.ssh/authorized_keys";
+  curl --silent https://github.com/juliekoubova.keys -o "$HOME/.ssh/authorized_keys";
   chmod 644 "$HOME/.ssh/authorized_keys"'
 
