@@ -38,8 +38,7 @@ packages_freebsd() {
 }
 
 user_freebsd() {
-  local username=$1 group=$2 uid=$3 
-  adduser -D -G "$group" -u "$uid" -w no "$username" 
+  adduser -D -G "$2" -u "$3" -w no "$1" 
 }
 
 sshd_freebsd() {
