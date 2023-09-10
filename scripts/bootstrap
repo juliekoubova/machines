@@ -38,7 +38,7 @@ packages_freebsd() {
 }
 
 user_freebsd() {
-  pw useradd -n "$1" -u "$3" -g "$2" -w no
+  pw useradd -m -n "$1" -u "$3" -g "$2" -w no
 }
 
 sshd_freebsd() {
