@@ -1,8 +1,11 @@
-- hosts: raptorek.totoro.family
+- hosts: raptorek
   become: yes
   roles:
     - role: alpine-base
       alpine_release: edge
+
+    - role: alpine-sdk
+      tags: [ alpine-sdk ]
 
     - role: alpine-physical
       consolefont: ter-124b.psf.gz

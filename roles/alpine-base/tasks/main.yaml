@@ -9,11 +9,13 @@
     line: 'source-directory /etc/network/interfaces.d'
 
 - name: Set APK repositories
+  tags: apk
   ansible.builtin.template:
     src: repositories
     dest: /etc/apk/repositories
 
 - name: Install packages
+  tags: apk
   community.general.apk:
     update_cache: yes
     name:

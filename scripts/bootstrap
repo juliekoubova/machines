@@ -65,6 +65,6 @@ EOF
 su ansible -c '
   set -ex
   mkdir -p -m 700 "$HOME/.ssh";
-  curl --silent https://github.com/juliekoubova.keys -o "$HOME/.ssh/authorized_keys";
+  curl https://juliekoubova.net/keys -o "$HOME/.ssh/authorized_keys";
   chmod 644 "$HOME/.ssh/authorized_keys"'
 
