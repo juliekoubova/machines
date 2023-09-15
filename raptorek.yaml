@@ -21,6 +21,8 @@
     - role: podman-user
       podman_user: julie
 
+    - role: 1password-cli
+
   tasks:
     - name: Install firmware
       community.general.apk:

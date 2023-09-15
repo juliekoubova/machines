@@ -1,0 +1,19 @@
+- name: Add 1Password APK repo
+  tags: apk
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "https://downloads.1password.com/linux/alpinelinux/stable/"
+    insertafter: EOF
+
+- name: Add 1Password APK repo keys
+  tags: apk
+  ansible.builtin.get_url:
+    url: https://downloads.1password.com/linux/keys/alpinelinux/support@1password.com-61ddfc31.rsa.pub
+    dest: /etc/apk/keys/support@1password.com-61ddfc31.rsa.pub
+
+- name: Update APK
+  tags: apk
+  community.general.apk:
+    update_cache: yes
+    name: 1password-cli
+

@@ -8,11 +8,20 @@
     path: /etc/network/interfaces
     line: 'source-directory /etc/network/interfaces.d'
 
-- name: Set APK repositories
+- name: Ensure @testing repo
+  when: "alpine_release == 'edge'"
   tags: apk
-  ansible.builtin.template:
-    src: repositories
+  ansible.builtin.lineinfile:
     dest: /etc/apk/repositories
+    line: "@testing {{ alpine_mirror }}/{{ alpine_release }}/testing"
+    insertafter: EOF
+
+- name: Ensure extra repos
+  loop: "{{ apk_extra_repos }}"
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "{{ item }}"
+    insertafter: EOF
 
 - name: Install packages
   tags: apk

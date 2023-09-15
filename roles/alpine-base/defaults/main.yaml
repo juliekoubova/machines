@@ -3,5 +3,4 @@ alpine_release: "{{ 'edge' if postmarketos else 'v3.18' }}"
 postmarketos: false
 postmarketos_mirror: http://mirror.postmarketos.org/postmarketos
 postmarketos_release: master
-extra_apk_repos: []
-
+apk_extra_repos: []

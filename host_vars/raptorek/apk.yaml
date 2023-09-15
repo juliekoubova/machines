@@ -1,2 +1,2 @@
-extra_apk_repos:
+apk_extra_repos:
   - '@julie /home/julie/packages/testing'
