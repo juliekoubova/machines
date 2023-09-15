@@ -17,6 +17,7 @@
     insertafter: EOF
 
 - name: Ensure extra repos
+  tags: apk
   loop: "{{ apk_extra_repos }}"
   ansible.builtin.lineinfile:
     dest: /etc/apk/repositories
