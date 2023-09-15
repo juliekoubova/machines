@@ -11,7 +11,7 @@
     url: https://downloads.1password.com/linux/keys/alpinelinux/support@1password.com-61ddfc31.rsa.pub
     dest: /etc/apk/keys/support@1password.com-61ddfc31.rsa.pub
 
-- name: Update APK
+- name: Install 1Password 
   tags: apk
   community.general.apk:
     update_cache: yes
