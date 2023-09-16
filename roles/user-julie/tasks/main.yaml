@@ -6,6 +6,7 @@
       - curl
       - doas
       - docs
+      - delta
       - drill
       - exa
       - fzf
@@ -13,6 +14,7 @@
       - htop
       - iputils # ping without root
       - jq
+      - less
       - man-pages
       - mandoc
       - neovim
