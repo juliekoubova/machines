@@ -1,0 +1,50 @@
+- name: Install zfs-autobackup
+  tags: [ zfs ]
+  community.general.apk:
+    name: py3-zfs-autobackup@testing
+
+- name: Ensure {{ backup_user }} user
+  ansible.builtin.user:
+    name: "{{ backup_user }}"
+    home: "{{ backup_home }}"
+    system: yes
+    password: '*'
+
+- name: Ensure {{ backup_user }} .ssh dir
+  ansible.builtin.file:
+    owner: "{{ backup_user }}"
+    group: nogroup
+    dest: "{{ backup_home }}/.ssh"
+    state: directory
+    mode: "700"
+
+- name: Ensure backup targets public keys are present in known_hosts file
+  loop: "{{ backup_targets }}"
+  ansible.builtin.known_hosts:
+    path: "{{ backup_home }}/.ssh/known_hosts"
+    name: "{{ hostvars[item].ansible_host | default(item) }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan {{ hostvars[item].ansible_host | default(item) }}') }}"
+
+- name: Configure backup targets SSH connection
+  loop: "{{ backup_targets }}"
+  ansible.builtin.blockinfile:
+    path: "{{ backup_home }}/.ssh/config"
+    create: yes
+    block: |
+      Host {{ item }}
+      User {{ inventory_hostname }}
+      HostName {{ hostvars[item].ansible_host | default(item) }}
+
+- name: Ensure {{ backup_user }} has an SSH key
+  community.crypto.openssh_keypair:
+    type: ed25519
+    path: "{{ backup_home }}/.ssh/id_ed25519"
+    owner: "{{ backup_user }}"
+    group: nogroup
+    mode: "600"
+  register: ssh_keypair
+
+- name: Set public key fact
+  ansible.builtin.set_fact:
+    backup_publickey: "{{ ssh_keypair.public_key }}"
+

@@ -2,7 +2,6 @@
   become: yes
   roles:
     - role: alpine-base
-      alpine_release: edge
 
     - role: alpine-sdk
       tags: [ alpine-sdk ]
@@ -22,6 +21,7 @@
       podman_user: julie
 
     - role: 1password-cli
+    - role: zfs-autobackup-push
 
   tasks:
     - name: Install firmware

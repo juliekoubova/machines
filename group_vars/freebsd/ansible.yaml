@@ -1,0 +1,5 @@
+ansible_user: ansible
+ansible_become: yes
+ansible_become_method: doas 
+ansible_python_interpreter: /usr/local/bin/python3.11
+

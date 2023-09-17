@@ -1,0 +1,15 @@
+- ansible.builtin.debug: 
+    msg: "{{ source_name }} {{ ssh_publickey }}"
+
+- name: "Create user {{ source_name }}"
+  ansible.builtin.user:
+    name: "{{ source_name }}"
+    system: yes
+    password: '*'
+
+- name: "Authorize {{ source_name }} public key"
+  ansible.posix.authorized_key:
+    user: "{{ source_name }}"
+    key: "{{ ssh_publickey }}"
+  tags: [ ssh ]
+

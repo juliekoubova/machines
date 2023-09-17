@@ -1,2 +1,3 @@
+alpine_release: edge
 apk_extra_repos:
   - '@julie /home/julie/packages/testing'

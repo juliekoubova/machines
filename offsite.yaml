@@ -1,0 +1,14 @@
+- hosts: backup_sources
+  roles:
+    - role: backup-push-source
+
+- hosts: backup_targets
+  tasks:
+    - name: Create backup source on target
+      ansible.builtin.include_role: 
+        name: backup-push-target
+      vars:
+        source_name: "{{ item }}"
+        ssh_publickey: "{{ hostvars[item].backup_publickey }}"
+      loop: "{{ groups.backup_sources }}"
+
