@@ -64,6 +64,12 @@
   ansible.builtin.set_fact:
     backup_publickey: "{{ ssh_keypair.public_key }}"
 
+- name: Install flock
+  tags: [ apk ]
+  community.general.apk:
+    name: flock
+    state: present
+
 - name: Create scripts
   loop: [ send.sh, snapshot.sh ]
   ansible.builtin.template:

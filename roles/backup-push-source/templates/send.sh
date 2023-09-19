@@ -1,6 +1,6 @@
 #!/bin/sh
 {% for target in backup_targets %}
-zfs-autobackup \
+flock --nonblock '{{ backup_home }}/send.{{ target }}.lock' zfs-autobackup \
   --no-snapshot \
   --rate 50M \
   --ssh-target '{{ target }}' \
