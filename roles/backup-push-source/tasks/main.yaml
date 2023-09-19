@@ -88,12 +88,26 @@
     dest: /etc/zzz.d
     state: directory
 
-- name: Send backups before suspend and after resume
+- name: Send backups before suspend
   ansible.builtin.copy:
     dest: /etc/zzz.d/send-backup
-    mode: '700'
+    mode: '755'
     content: |
       #!/bin/sh
       if [ "${1}" == "pre" ]; then
-        exec doas -u "{{ backup_user }}" "{{ backup_home }}/send.sh"
+        exec su -s /bin/sh "{{ backup_user }}" "{{ backup_home }}/send.sh"
       fi
+
+- name: Send backups before shutdown
+  ansible.builtin.copy:
+    dest: /etc/local.d/send-backup.stop
+    mode: '755'
+    content: |
+      #!/bin/sh
+      exec su -s /bin/sh "{{ backup_user }}" "{{ backup_home }}/send.sh"
+
+- name: Ensure local service enabled
+  ansible.builtin.service:
+    name: local
+    enabled: yes
+    state: started
