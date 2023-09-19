@@ -1,2 +1,5 @@
 backup_user: backup
 backup_home: /home/backup
+backup_send_hour: 5,20
+backup_send_minute: 20
+backup_job_common_args: --utc --verbose --snapshot-format '{}-%Y-%m-%d-%H%M' 

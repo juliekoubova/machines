@@ -1,6 +1,3 @@
-- ansible.builtin.debug: 
-    msg: "{{ source_name }} {{ ssh_publickey }}"
-
 - name: "Create user {{ source_name }}"
   ansible.builtin.user:
     name: "{{ source_name }}"
@@ -13,3 +10,26 @@
     key: "{{ ssh_publickey }}"
   tags: [ ssh ]
 
+- name: "Create dataset {{ zfs_backups_dataset }}/{{ source_name }}"
+  community.general.zfs:
+    name: "{{ zfs_backups_dataset }}/{{ source_name }}"
+    state: present
+
+- name: "Configure ZFS permissions for {{ source_name }}"
+  community.general.zfs_delegate_admin:
+    name: "{{ zfs_backups_dataset }}/{{ source_name }}"
+    permissions: 
+      - acltype
+      - canmount
+      - compression
+      - create
+      - destroy
+      - dnodesize
+      - hold
+      - mount
+      - mountpoint
+      - receive
+      - release
+      - rollback
+      - xattr
+    users: "{{ source_name }}"

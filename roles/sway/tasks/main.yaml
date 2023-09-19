@@ -50,9 +50,9 @@
     - zzz-if-no-ssh
 
 - name: Allow doas zzz-if-no-ssh without password
-  ansible.builtin.copy:
-    dest: /etc/doas.d/zzz-if-no-ssh.conf
-    content: "permit nopass :wheel cmd zzz-if-no-ssh\n"
+  ansible.builtin.lineinfile:
+    dest: /etc/doas.conf
+    line: permit nopass :wheel cmd zzz-if-no-ssh
 
 - name: Suspend when power button pressed
   ansible.builtin.copy:

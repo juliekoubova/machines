@@ -21,7 +21,6 @@
       podman_user: julie
 
     - role: 1password-cli
-    - role: zfs-autobackup-push
 
   tasks:
     - name: Install firmware

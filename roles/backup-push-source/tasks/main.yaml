@@ -35,6 +35,12 @@
       User {{ inventory_hostname }}
       HostName {{ hostvars[item].ansible_host | default(item) }}
 
+- name: "Configure ZFS permissions for {{ backup_user }} on {{ zfs_root_pool }}"
+  community.general.zfs_delegate_admin:
+    name: "{{ zfs_root_pool }}"
+    permissions: [ mount, send, hold, snapshot, destroy, release ]
+    users: "{{ backup_user }}"
+
 - name: Ensure {{ backup_user }} has an SSH key
   community.crypto.openssh_keypair:
     type: ed25519
@@ -48,3 +54,31 @@
   ansible.builtin.set_fact:
     backup_publickey: "{{ ssh_keypair.public_key }}"
 
+- name: Create scripts
+  loop: [ send.sh, snapshot.sh ]
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ backup_home }}/{{ item }}"
+    mode: '700'
+    group: nogroup
+    owner: "{{ backup_user }}"
+
+- name: Setup snapshot job every 15 minutes
+  ansible.builtin.cron:
+    user: "{{ backup_user }}"
+    name: snapshot
+    minute: '*/15'
+    job: "{{ backup_home }}/snapshot.sh"
+
+- name: Setup send job
+  ansible.builtin.cron:
+    user: "{{ backup_user }}"
+    name: send
+    hour: "{{ backup_send_hour }}"
+    minute: "{{ backup_send_minute }}"
+    job: "{{ backup_home }}/send.sh"
+
+- name: Allow doas send without password
+  ansible.builtin.lineinfile:
+    dest: /etc/doas.conf
+    line: "permit nopass :wheel as {{ backup_user }} cmd {{ backup_home }}/send.sh"
