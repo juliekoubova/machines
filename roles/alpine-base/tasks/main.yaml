@@ -9,11 +9,11 @@
     line: 'source-directory /etc/network/interfaces.d'
 
 - name: Ensure @testing repo
-  when: "alpine_release == 'edge'"
   tags: apk
   ansible.builtin.lineinfile:
     dest: /etc/apk/repositories
-    line: "@testing {{ alpine_mirror }}/{{ alpine_release }}/testing"
+    line: "@testing {{ alpine_mirror }}/edge/testing"
+    regexp: "^@testing\\s"
     insertafter: EOF
 
 - name: Ensure extra repos
