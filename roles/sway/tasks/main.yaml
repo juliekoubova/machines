@@ -3,6 +3,11 @@
     dest: /etc/profile.d/julie-xdg-runtime-dir.sh
     src: julie-xdg-runtime-dir.sh
 
+- name: Setup udev rules
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/julie-backlight.rules
+    src: julie-backlight.rules
+
 - name: Install packages
   community.general.apk:
     name: 
