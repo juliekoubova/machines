@@ -1,4 +1,5 @@
 - name: Install podman and fuse-overlayfs
+  tags: [ apk ]
   community.general.apk:
     name: [ podman, fuse, fuse-overlayfs ]
     state: present
@@ -24,6 +25,8 @@
     loop_var: podman_user
 
 - name: Ensure ZFS dataset
+  tags: [ zfs ]
+  when: "{{ zfs_root_dataset | default(false) }}"
   community.general.zfs:
     name: "{{ zfs_root_dataset }}/var/lib/containers"
     state: present

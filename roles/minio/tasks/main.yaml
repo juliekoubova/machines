@@ -1,0 +1,27 @@
+- name: Install MinIO
+  tags: [ apk ]
+  community.general.apk:
+    name: [ minio, minio-client ]
+
+- name: MinIO dataset
+  tags: [ zfs ]
+  when: zfs and (minio_data_dir | default(false))
+  community.general.zfs:
+    name: "{{ zfs_data_pool }}{{ minio_data_dir }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ minio_data_dir }}"
+
+- name: Configure MinIO
+  ansible.builtin.template:
+    dest: /etc/conf.d/minio
+    src: confd.j2
+    owner: root
+    group: root
+    mode: '750'
+
+- name: Enable and start MinIO
+  ansible.builtin.service:
+    name: minio
+    enabled: yes
+    state: started
