@@ -5,6 +5,7 @@
 
 - name: Ensure subuid and subgid
   ansible.builtin.lineinfile:
+    create: true
     dest: "/etc/{{ item }}"
     line: "{{ podman_user }}:{{ user_info.uid * 100000 }}:100000"
   loop:

@@ -7,3 +7,5 @@
       consolefont: ter-132b.psf.gz
     - role: sway-desktop
       sway_users: [ julie ]
+    - role: podman-user
+      podman_user: julie
