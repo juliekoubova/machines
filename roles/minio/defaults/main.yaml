@@ -1,0 +1,6 @@
+minio_alias: localhost
+minio_address: localhost:9000
+minio_browser: false
+minio_console_address: localhost:9001
+minio_buckets: []
+minio_users: []

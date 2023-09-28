@@ -1,0 +1,16 @@
+- name: List MinIO users
+  changed_when: false
+  failed_when: false
+  register: exists
+  ansible.builtin.shell: >
+    mcli admin user list "{{ minio_alias }}" \
+      | grep -q '{{ item.name }}\s*$'
+
+- name: "Create user {{ item.name }}"
+  when: exists.rc != 0
+  ansible.builtin.shell: >
+    mcli admin user add \
+      "{{ minio_alias }}" \
+      "{{ item.name }}" \
+      "{{ item.password }}"
+

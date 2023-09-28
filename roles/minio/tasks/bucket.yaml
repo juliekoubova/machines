@@ -1,0 +1,11 @@
+- name: "Check MinIO bucket {{ item.key }}"
+  changed_when: false
+  failed_when: false
+  register: stat
+  ansible.builtin.shell: >
+    mcli stat "{{ minio_alias }}/{{ item.key }}"
+
+- name: "Create bucket {{ item.key }}"
+  when: stat.rc != 0
+  ansible.builtin.shell: >
+    mcli mb "{{ minio_alias }}/{{ item.key }}" 

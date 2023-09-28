@@ -25,3 +25,28 @@
     name: minio
     enabled: yes
     state: started
+
+- name: Get mcli alias
+  register: mcli_alias
+  changed_when: false
+  failed_when: false
+  ansible.builtin.shell: >
+    mcli alias ls "{{ minio_alias }}" 
+
+- name: Set mcli alias
+  when: mcli_alias.rc != 0
+  no_log: true
+  ansible.builtin.shell: >
+    mcli alias set "{{ minio_alias }}" \
+      "http://{{ minio_address }}" \
+      "{{ minio_root_user }}" \
+      "{{ minio_root_password }}"
+
+- name: Create MinIO users
+  loop: "{{ minio_users }}"
+  no_log: true
+  ansible.builtin.include_tasks: user.yaml
+
+- name: Create MinIO buckets
+  loop: "{{ minio_buckets }}"
+  ansible.builtin.include_tasks: bucket.yaml
