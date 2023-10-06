@@ -1,11 +1,13 @@
 #!/bin/sh
-{% for target in backup_targets %}
-flock --nonblock '{{ backup_home }}/send.{{ target }}.lock' zfs-autobackup \
+{% for target in backup_targets | dict2items %}
+{% if target.key != 'local' %}
+flock --nonblock '{{ backup_home }}/send.{{ target.key }}.lock' zfs-autobackup \
   --no-snapshot \
   --rate 50M \
-  --ssh-target '{{ target }}' \
+  --ssh-target '{{ target.key }}' \
   --zfs-compressed \
   {{ backup_job_common_args }} \
-  '{{ target }}' \
-  '{{ hostvars[target].zfs_backups_dataset }}/{{ inventory_hostname }}'
+  '{{ target.key }}' \
+  '{{ hostvars[target.key].zfs_backups_dataset }}/{{ inventory_hostname }}'
+{% endif %}
 {% endfor %}

@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: backup_sources
   roles:
     - role: backup-push-source

@@ -1,0 +1,16 @@
+- name: "Configure ZFS permissions for {{ backup_user }} on source data sets"
+  tags: [ zfs ]
+  loop: "{{ target.value }}"
+  community.general.zfs_delegate_admin:
+    name: "{{ item }}"
+    permissions: [ mount, send, hold, snapshot, destroy, release ]
+    users: "{{ backup_user }}"
+
+- name: "Set source data sets autobackup properties"
+  tags: [ zfs ]
+  loop: "{{ target.value }}"
+  community.general.zfs:
+    name: "{{ item }}"
+    state: present
+    extra_zfs_properties: "{ 'autobackup:{{ target.key }}': 'true' }"
+

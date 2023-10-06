@@ -1,0 +1,14 @@
+- name: "Ensure {{ target.key }} public keys are present in known_hosts file"
+  ansible.builtin.known_hosts:
+    path: "{{ backup_home }}/.ssh/known_hosts"
+    name: "{{ hostvars[target.key].ansible_host | default(target.key) }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan {{ hostvars[target.key].ansible_host | default(target.key) }}') }}"
+
+- name: "Configure {{ target.key }} SSH connection"
+  ansible.builtin.blockinfile:
+    path: "{{ backup_home }}/.ssh/config"
+    create: yes
+    block: |
+      Host {{ target.key }}
+      User {{ inventory_hostname }}
+      HostName {{ hostvars[target.key].ansible_host | default(target.key) }}

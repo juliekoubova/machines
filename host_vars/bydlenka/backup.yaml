@@ -1,7 +1,10 @@
 backup_send_hour: 3,13,23
 backup_send_minute: 40
-backup_source_datasets:
-  - tank/data/julie
-  - tank/data/tereza
-  - zroot/data
-  - zroot/home
+backup_targets:
+  local:
+    - zroot
+  offsite:
+    - tank/data/julie
+    - tank/data/tereza
+    - zroot/data
+    - zroot/home

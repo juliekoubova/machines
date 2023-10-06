@@ -18,38 +18,20 @@
     state: directory
     mode: "700"
 
-- name: Ensure backup targets public keys are present in known_hosts file
-  loop: "{{ backup_targets }}"
-  ansible.builtin.known_hosts:
-    path: "{{ backup_home }}/.ssh/known_hosts"
-    name: "{{ hostvars[item].ansible_host | default(item) }}"
-    key: "{{ lookup('pipe', 'ssh-keyscan {{ hostvars[item].ansible_host | default(item) }}') }}"
+- name: Configure backup target SSH
+  loop: "{{ backup_targets | dict2items }}"
+  loop_control:
+    loop_var: target
+    label: "{{ target.key }}"
+  when: target.key != 'local'
+  ansible.builtin.include_tasks: target-ssh.yaml
 
-- name: Configure backup targets SSH connection
-  loop: "{{ backup_targets }}"
-  ansible.builtin.blockinfile:
-    path: "{{ backup_home }}/.ssh/config"
-    create: yes
-    block: |
-      Host {{ item }}
-      User {{ inventory_hostname }}
-      HostName {{ hostvars[item].ansible_host | default(item) }}
-
-- name: "Configure ZFS permissions for {{ backup_user }} on source data sets"
-  tags: [ zfs ]
-  loop: "{{ backup_source_datasets }}"
-  community.general.zfs_delegate_admin:
-    name: "{{ item }}"
-    permissions: [ mount, send, hold, snapshot, destroy, release ]
-    users: "{{ backup_user }}"
-
-- name: "Set source data sets autobackup properties"
-  tags: [ zfs ]
-  loop: "{{ backup_source_datasets | product(backup_targets) }}"
-  community.general.zfs:
-    name: "{{ item[0] }}"
-    state: present
-    extra_zfs_properties: "{ 'autobackup:{{ item[1] }}': 'true' }"
+- name: Configure datasets
+  loop: "{{ backup_targets | dict2items }}"
+  loop_control:
+    loop_var: target
+    label: "{{ target.key }}"
+  ansible.builtin.include_tasks: target-zfs.yaml
 
 - name: Ensure {{ backup_user }} has an SSH key
   community.crypto.openssh_keypair:

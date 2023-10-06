@@ -3,5 +3,6 @@ backup_home: /home/backup
 backup_send_hour: 5,20
 backup_send_minute: 20
 backup_job_common_args: --utc --verbose --snapshot-format '{}-%Y-%m-%d-%H%M' 
-backup_source_datasets:
-  - "{{ zfs_root_pool }}"
+backup_targets:
+  offsite:
+    - "{{ zfs_root_pool }}"
