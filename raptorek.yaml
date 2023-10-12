@@ -34,3 +34,4 @@
       ansible.builtin.copy:
         dest: /etc/mkinitfs/mkinitfs.conf
         content: 'features="base keymap kms nvme usb zfs zfshost"'
+

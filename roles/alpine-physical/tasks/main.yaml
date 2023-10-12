@@ -6,6 +6,8 @@
       - efibootmgr
       - font-terminus
       - lm-sensors
+      - lm-sensors-detect
+      - lm-sensors-fancontrol
       - lsblk
       - mingetty
       - openntpd
@@ -53,3 +55,9 @@
     state: started
   loop: "{{ services }}"
 
+- name: Force nct6683
+  when: force_nct6683
+  ansible.builtin.lineinfile:
+    create: yes
+    dest: /etc/modprobe.d/nct6683.conf
+    line: options nct6683 force=1
