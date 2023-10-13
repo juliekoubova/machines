@@ -1,6 +1,5 @@
 - name: Install packages
   community.general.apk:
-    update_cache: yes
     name:
       - chezmoi
       - curl
@@ -8,7 +7,7 @@
       - docs
       - delta
       - drill
-      - exa
+      - eza
       - fzf
       - git
       - htop
