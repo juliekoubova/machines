@@ -58,3 +58,10 @@
     regex: '^#?PasswordAuthentication'
     insertbefore: BOF # first one wins with sshd_config
   tags: [ ssh ]
+
+- name: Timeout login shells
+  ansible.builtin.copy:
+    dest: /etc/profile.d/julie-tmout.sh
+    content: |
+      TMOUT={{ shell_tmout }}
+      readonly TMOUT
