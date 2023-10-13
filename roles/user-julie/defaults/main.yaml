@@ -1,0 +1,2 @@
+eza_or_exa: "{{ 'eza' if alpine_release == 'edge' else 'exa' }}"
+

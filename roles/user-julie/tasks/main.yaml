@@ -7,7 +7,7 @@
       - docs
       - delta
       - drill
-      - eza
+      - "{{ eza_or_exa }}"
       - fzf
       - git
       - htop
