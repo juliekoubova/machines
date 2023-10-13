@@ -51,17 +51,14 @@
     mode: 0755
     src: "{{ item }}"
   loop:
-    - swaypoweroff
-    - swayreboot
     - swayzzz
     - zzz-if-no-ssh
 
 - name: Allow doas scripts without password
   tags: [ doas ]
-  loop: [ swaypoweroff, swayreboot, zzz-if-no-ssh ]
   ansible.builtin.lineinfile:
     dest: /etc/doas.d/doas.conf
-    line: "permit nopass :wheel cmd {{ item }}"
+    line: "permit nopass :wheel cmd zzz-if-no-ssh"
 
 - name: Suspend when power button pressed
   ansible.builtin.copy:

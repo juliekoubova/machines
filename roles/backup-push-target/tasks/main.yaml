@@ -28,7 +28,9 @@
       - hold
       - mount
       - mountpoint
+      - readonly
       - receive
+      - refreservation
       - release
       - rollback
       - xattr

@@ -55,9 +55,18 @@
     state: started
   loop: "{{ services }}"
 
+# Needed for MSI Z790 boards to report fan speed
 - name: Force nct6683
   when: force_nct6683
   ansible.builtin.lineinfile:
     create: yes
     dest: /etc/modprobe.d/nct6683.conf
     line: options nct6683 force=1
+
+- name: Allow wheel to reboot and poweroff
+  tags: [ doas ]
+  ansible.builtin.lineinfile:
+    dest: /etc/doas.d/doas.conf
+    line: "permit nopass :wheel cmd {{ item }}"
+  loop: [ poweroff, reboot ]
+

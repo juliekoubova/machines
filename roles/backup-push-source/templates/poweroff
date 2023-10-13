@@ -1,0 +1,3 @@
+#!/bin/sh
+trap 'exec /sbin/poweroff' EXIT HUP INT
+[ -x "{{ backup_home }}/send.sh" ] && "{{ backup_home }}/send.sh"

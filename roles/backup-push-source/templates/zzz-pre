@@ -1,0 +1,4 @@
+#!/bin/sh
+if [ "${1}" == "pre" ]; then
+  exec "{{ backup_home }}/send.sh"
+fi

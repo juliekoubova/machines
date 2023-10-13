@@ -26,7 +26,7 @@
 
 - name: Ensure ZFS dataset
   tags: [ zfs ]
-  when: "{{ zfs_root_dataset | default(false) }}"
+  when: zfs_root_dataset | default(false)
   community.general.zfs:
     name: "{{ zfs_root_dataset }}/var/lib/containers"
     state: present

@@ -57,8 +57,8 @@
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ backup_home }}/{{ item }}"
-    mode: '700'
-    group: nogroup
+    mode: '750'
+    group: wheel
     owner: "{{ backup_user }}"
 
 - name: Setup snapshot job every 15 minutes
@@ -86,27 +86,18 @@
     dest: /etc/zzz.d
     state: directory
 
-- name: Send backups before suspend
-  ansible.builtin.copy:
-    dest: /etc/zzz.d/send-backup
+- name: Create scripts
+  ansible.builtin.template:
+    dest: "{{ item.dest }}"
+    src: "{{ item.src }}"
     mode: '755'
-    content: |
-      #!/bin/sh
-      if [ "${1}" == "pre" ]; then
-        exec su -s /bin/sh "{{ backup_user }}" "{{ backup_home }}/send.sh"
-      fi
+  loop:
+    - { src: poweroff, dest: /usr/local/bin/poweroff }
+    - { src: reboot, dest: /usr/local/bin/reboot }
+    - { src: zzz-pre, dest: /etc/zzz.d/send-backup }
 
-- name: Send backups before shutdown
-  ansible.builtin.copy:
-    dest: /etc/local.d/send-backup.stop
-    mode: '755'
-    content: |
-      #!/bin/sh
-      exec su -s /bin/sh "{{ backup_user }}" "{{ backup_home }}/send.sh"
-
-- name: Ensure services enabled
-  loop: [ crond, local ]
+- name: Ensure crond enabled
   ansible.builtin.service:
-    name: "{{ item }}"
+    name: crond
     enabled: yes
     state: started

@@ -1,7 +1,0 @@
-#!/bin/sh
-nohup reboot -d 2 >/dev/null 2>&1 &
-if [ -n "${SWAYSOCK}" ]; then
-  # exit sway so we can see OpenRC messages
-  swaymsg exit
-fi
-

@@ -3,7 +3,13 @@
   loop: "{{ target.value }}"
   community.general.zfs_delegate_admin:
     name: "{{ item }}"
-    permissions: [ mount, send, hold, snapshot, destroy, release ]
+    permissions:  
+      - mount
+      - send
+      - hold
+      - snapshot
+      - destroy
+      - release 
     users: "{{ backup_user }}"
 
 - name: "Set source data sets autobackup properties"

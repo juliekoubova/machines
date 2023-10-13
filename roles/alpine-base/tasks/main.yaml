@@ -33,12 +33,6 @@
       - doas
       - iputils # ping without root
 
-- name: Install ZFS packages
-  tags: [ apk, zfs ]
-  when: zfs
-  community.general.apk:
-    name: zfs-auto-snapshot
-
 - name: Set timezone
   ansible.builtin.command:
     cmd: "setup-timezone -i {{ timezone }}"
