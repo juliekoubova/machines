@@ -19,14 +19,6 @@
     home: "{{ data_dir }}/{{ torrent_config }}"
   register: torrent_user
 
-- name: sonarr user
-  ansible.builtin.user:
-    name: "sonarr"
-    groups: "servarr"
-    system: yes
-    home: "{{ data_dir }}/{{ sonarr_config }}"
-  register: sonarr_user
-
 - name: jellyfin user
   ansible.builtin.user:
     name: jellyfin
@@ -41,7 +33,6 @@
     dest: "{{ data_dir }}/{{ item.path }}"
   loop:
     - { path: "{{ jellyfin_config }}", owner: "{{ jellyfin_user.name }}" }
-    - { path: "{{ sonarr_config }}", owner: "{{ sonarr_user.name }}" }
     - { path: "{{ torrent_config }}", owner: "{{ torrent_user.name }}" }
 
 - name: Jellyfin container

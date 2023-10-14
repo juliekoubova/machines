@@ -1,0 +1,33 @@
+- name: Install prometheus
+  tags: [ apk ]
+  community.general.apk:
+    name:
+      - prometheus
+      - prometheus-node-exporter
+
+- name: Configure prometheus
+  ansible.builtin.template:
+    dest: /etc/prometheus/prometheus.yml
+    src: prometheus.yml.j2
+
+- name: Create prometheus-podman-exporter container
+  when: "podman | default(false)"
+  containers.podman.podman_container:
+    name: prometheus-podman-exporter
+    image: quay.io/navidys/prometheus-podman-exporter
+    env:
+      CONTAINER_HOST: unix:///run/podman/podman.sock
+    mount:
+      - 'type=bind,source=/run/podman/podman.sock,destination=/run/podman/podman.sock'
+    user: root
+    publish:
+      - '9882:9882/tcp'
+
+- name: Enable and start services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop: [ prometheus, node-exporter ]
+
+
