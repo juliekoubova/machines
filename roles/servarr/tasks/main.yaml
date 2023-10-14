@@ -1,4 +1,5 @@
 - name: servarr dataset
+  when: zfs
   community.general.zfs:
     name: "{{ zfs_data_pool }}{{ data_dir }}"
     state: present
@@ -7,33 +8,28 @@
 
 - name: servarr group
   ansible.builtin.group:
-    name: "servarr"
-    system: no
-  register: group
-
-- name: qBittorrent user
-  ansible.builtin.user:
-    name: "qbittorrent"
-    groups: "servarr"
+    name: servarr
     system: yes
-    home: "{{ data_dir }}/{{ torrent_config }}"
-  register: torrent_user
+  register: servarr_group
 
-- name: jellyfin user
+- name: servarr user
   ansible.builtin.user:
-    name: jellyfin
-    group: jellyfin
+    name: servarr
+    group: servarr
     system: yes
-    home: "{{ data_dir }}/{{ jellyfin_config }}"
-  register: jellyfin_user
+    home: "{{ data_dir }}"
+  register: servarr_user
 
 - name: servarr directories
   ansible.builtin.file:
     state: directory
-    dest: "{{ data_dir }}/{{ item.path }}"
+    owner: servarr
+    group: servarr
+    dest: "{{ data_dir }}/{{ item }}"
   loop:
-    - { path: "{{ jellyfin_config }}", owner: "{{ jellyfin_user.name }}" }
-    - { path: "{{ torrent_config }}", owner: "{{ torrent_user.name }}" }
+    - "{{ filebot_config }}"
+    - "{{ jellyfin_config }}"
+    - "{{ torrent_config }}"
 
 - name: Jellyfin container
   containers.podman.podman_container:
@@ -42,8 +38,8 @@
     restart_policy: always
     cmd_args: --no-healthcheck # fuck systemd timers
     env:
-      PUID: "{{ jellyfin_user.uid }}"
-      PGID: "{{ group.gid }}"
+      PUID: "{{ servarr_user.uid }}"
+      PGID: "{{ servarr_group.gid }}"
       TZ: "{{ timezone }}"
       UMASK: '002'
     volume:
@@ -60,40 +56,33 @@
     restart_policy: always
     cmd_args: --no-healthcheck # fuck systemd timers
     env:
-      PUID: "{{ torrent_user.uid }}"
-      PGID: "{{ group.gid }}"
+      PUID: "{{ servarr_user.uid }}"
+      PGID: "{{ servarr_group.gid }}"
       TZ: "{{ timezone }}"
       UMASK: '002'
       WEBUI_PORT: 8080
     volume:
       - "{{ data_dir }}/{{ torrent_config }}:/config"
-      - "{{ torrent_dir }}:{{ torrent_dir }}"
-    publish:
-      - 8080:8080
+      - "{{ media_dir }}:/data"
     label:
       traefik.http.routers.qbittorrent.rule: Host(`qbittorrent.totoro.family`) 
       traefik.http.routers.qbittorrent.entrypoints: websecure
       traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
 
-#- name: sonarr container
-#  containers.podman.podman_container:
-#    name: "sonarr"
-#    image: "ghcr.io/hotio/sonarr"
-#    restart_policy: always
-#    cmd_args: --no-healthcheck # fuck systemd timers
-#    env:
-#      PUID: "{{ sonarr_user.uid }}"
-#      PGID: "{{ group.gid }}"
-#      TZ: "{{ timezone }}"
-#      UMASK: '002'
-#      WEBUI_PORT: 8080
-#    volume:
-#      - "{{ data_dir }}/{{ sonarr_config }}:/config"
-#      - "{{ data_dir }}:{{ data_dir }}"
-#    publish:
-#      - 8989:8989
-#    label:
-#      traefik.http.routers.sonarr.rule: Host(`sonarr.totoro.family`) 
-#      traefik.http.routers.sonarr.entrypoints: websecure
-#      traefik.http.services.sonarr.loadbalancer.server.port: 8989
-#
+- name: FileBot Node container
+  containers.podman.podman_container:
+    name: filebot-node
+    image: rednoah/filebot:node
+    restart_policy: always
+    cmd_args: --no-healthcheck # fuck systemd timers
+    env:
+      PUID: "{{ servarr_user.uid }}"
+      PGID: "{{ servarr_group.gid }}"
+    volume:
+      - "{{ data_dir }}/{{ filebot_config }}:/data"
+      - "{{ media_dir }}:/volume1"
+    label:
+      traefik.http.routers.filebot.rule: Host(`filebot.totoro.family`) 
+      traefik.http.routers.filebot.entrypoints: websecure
+      traefik.http.services.filebot.loadbalancer.server.port: 5452
+

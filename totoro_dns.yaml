@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: totoro_dns
   roles:
     - role: dhcpcd
