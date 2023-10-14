@@ -4,6 +4,7 @@ nozzlecam="${baseurl}:39413/239f28a3f5aaac53"
 platecam="${baseurl}:34655/2b2ffc99b34bde00"
 topcam="${baseurl}:45629/6ce3b7cd6aa78bdc"
 vlc="vlc --loop --no-video-title"
+sleep 10
 swaymsg "splith; exec ${vlc} '${nozzlecam}'"
 sleep 10
 swaymsg "exec ${vlc} '${platecam}'"
