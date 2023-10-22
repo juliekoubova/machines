@@ -21,6 +21,7 @@
       --entrypoints.websecure.http.tls.domains[1].main=jellyfin.totoro.family
       --entrypoints.websecure.http.tls.domains[2].main=qbittorrent.totoro.family
       --entrypoints.websecure.http.tls.domains[3].main=filebot.totoro.family
+      --entrypoints.websecure.http.tls.domains[4].main=scrypted.totoro.family
     env:
       TZ: "{{ timezone }}"
       CLOUDFLARE_EMAIL: "{{ cloudflare_email }}"

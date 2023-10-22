@@ -1,8 +1,10 @@
 - name: package
+  tags: [ apk, net, bridge-if ]
   community.general.apk:
     name: bridge
 
 - name: Create bridge interface
+  tags: [ net, bridge-if ]
   ansible.builtin.template:
     src: interface.j2
     dest: "/etc/network/interfaces.d/{{ ifname }}"

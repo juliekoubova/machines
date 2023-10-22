@@ -1,0 +1,16 @@
+- name: Install packages
+  community.general.apk:
+    name: [ cups, brlaser ]
+
+- name: Add root to lpadmin group
+  ansible.builtin.user:
+    name: root
+    append: yes
+    groups: lpadmin
+
+- name: Enable and start cupsd
+  ansible.builtin.service:
+    name: cupsd
+    enabled: yes
+    state: started
+

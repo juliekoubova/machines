@@ -1,0 +1,19 @@
+- name: Scrypted container
+  containers.podman.podman_container:
+    image: koush/scrypted
+    name: scrypted
+    command: >
+    env:
+      TZ: "{{ timezone }}"
+    restart_policy: always
+    network: host
+    mount:
+      - 'type=bind,source=/dev/dri,destination=/dev/dri'
+      - 'type=bind,source=/run/avahi-daemon/socket,destination=/var/run/avahi-daemon/socket'
+      - 'type=bind,source=/run/dbus,destination=/var/run/dbus'
+    volume:
+      - scrypted:/server/volume
+    label:
+      traefik.http.routers.scrypted.rule: Host(`scrypted.totoro.family`) 
+      traefik.http.routers.scrypted.entrypoints: websecure
+      traefik.http.services.scrypted.loadbalancer.server.port: 11080

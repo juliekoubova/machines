@@ -1,8 +1,8 @@
 #!/bin/sh
-baseurl='rtsp://home.totoro.family'
-nozzlecam="${baseurl}:39413/239f28a3f5aaac53"
-platecam="${baseurl}:34655/2b2ffc99b34bde00"
-topcam="${baseurl}:45629/6ce3b7cd6aa78bdc"
+baseurl='rtsp://scrypted.totoro.family'
+nozzlecam="${baseurl}:55401/00751fdc7ceabb15"
+platecam="${baseurl}:55402/829cdb62f9201bf5"
+topcam="${baseurl}:55403/3d8a637cc2f64830"
 vlc="vlc --loop --no-video-title"
 sleep 10
 swaymsg "splith; exec ${vlc} '${nozzlecam}'"

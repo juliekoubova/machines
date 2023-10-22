@@ -1,19 +1,13 @@
 dependencies:
-  - role: vlan-if
-    vars:
-      ifname: eth0-things
-      vlan: 8
-      raw_device: eth0
-
   - role: bridge-if
     vars:
-      ifname: br-things
+      ifname: br8
       bridge_ports:
-        - eth0-things
+        - eth0.8
 
   - role: qemu-bridge
     vars:
-      ifname: br-things
+      ifname: br8
 
   - role: qemu-vm
     vars:
@@ -21,7 +15,7 @@ dependencies:
       vmname: haos
       memory: 16G
       net0: bridge
-      net0_br: br-things
+      net0_br: br8
       disk0_file: /data/vm/haos/disk0.img
       disk0_format: raw
       ovmf: yes

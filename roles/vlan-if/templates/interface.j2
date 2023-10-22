@@ -6,3 +6,16 @@ auto {{ ifname }}
 iface {{ ifname }}
 	vlan-id {{ vlan }}
 	vlan-raw-device {{ raw_device }}
+{% if inet_dhcp %}
+
+iface {{ ifname }} inet dhcp
+{% elif inet_address and inet_gateway %}
+
+iface {{ ifname }} inet static
+	address {{ inet_address }}
+	gateway {{ inet_gateway }}
+{% endif %}
+{% if inet6_auto %}
+
+iface {{ ifname }} inet6 auto
+{% endif %}

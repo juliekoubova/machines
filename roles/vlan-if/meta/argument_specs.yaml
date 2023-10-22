@@ -8,3 +8,15 @@ argument_specs:
         required: yes
       raw_device:
         required: yes
+      inet_dhcp:
+        type: bool
+        required: no
+      inet_address:
+        type: str
+        required: no
+      inet_gateway:
+        type: str
+        required: no
+      inet6_auto:
+        type: bool
+        required: no

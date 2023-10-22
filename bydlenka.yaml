@@ -26,6 +26,20 @@
       vfio_softdeps: [ xhci_hcd ]
       tags: [ haos ]
 
+    - role: vlan-if
+      vars:
+        ifname: eth0.8
+        vlan: 8
+        raw_device: eth0
+
+    - role: vlan-if
+      vars:
+        ifname: eth0.2
+        vlan: 2
+        raw_device: eth0
+        inet_dhcp: true
+        inet6_auto: true
+
     - role: samba
       tags: [ samba, servarr ]
 
@@ -47,6 +61,9 @@
       zfs_data_pool: tank
       data_dir: /data/servarr
       tags: [ servarr ]
+
+    - role: scrypted
+      tags: [ scrypted ]
 
     - role: traefik
       tags: [ podman, servarr, traefik ]

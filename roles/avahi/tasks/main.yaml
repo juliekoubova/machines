@@ -1,0 +1,14 @@
+- name: Install avahi and dbus
+  tags: [ apk, avahi, dbus ]
+  community.general.apk:
+    name: [ avahi, dbus ]
+
+- name: Start services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - avahi-daemon
+    - dbus
+

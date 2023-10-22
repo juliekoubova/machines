@@ -15,6 +15,9 @@
     - role: sway-desktop
       sway_users: [ julie ]
 
+    - role: cups
+      tags: [ cups ]
+
     - role: user-julie
     - role: user-ansible
 

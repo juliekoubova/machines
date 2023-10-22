@@ -1,0 +1,4 @@
+inet_dhcp: false
+inet_address: false
+inet_gateway: false
+inet6_auto: false
