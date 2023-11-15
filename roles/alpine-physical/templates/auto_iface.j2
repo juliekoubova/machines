@@ -1,0 +1,7 @@
+auto {{ item.name }}
+{% if item.inet | d(false) %}
+iface {{ item.name }} inet {{ item.inet }}
+{% endif %}
+{% if item.inet6 | d(false) %}
+iface {{ item.name }} inet6 {{ item.inet6 }}
+{% endif %}

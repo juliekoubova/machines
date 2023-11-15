@@ -1,6 +1,7 @@
 - name: "Allow bridge {{ ifname }}"
   ansible.builtin.lineinfile:
     dest: /etc/qemu/bridge.conf
+    create: yes
     owner: root
     group: qemu
     mode: '640'

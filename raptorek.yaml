@@ -9,6 +9,7 @@
 
     - role: alpine-physical
       consolefont: ter-124b.psf.gz
+      tags: [ alpine-physical ]
 
     - role: samba
 

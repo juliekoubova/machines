@@ -4,6 +4,8 @@
       - dosfstools
       - e2fsprogs
       - efibootmgr
+      - eudev
+      - eudev-netifnames
       - font-terminus
       - lm-sensors
       - lm-sensors-detect
@@ -70,7 +72,6 @@
         dest: /etc/modprobe.d/nct6683.conf
         line: options nct6683 force=1
 
-
 - name: Allow wheel to reboot and poweroff
   tags: [ doas ]
   ansible.builtin.lineinfile:
@@ -78,3 +79,5 @@
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 
+- ansible.builtin.include_tasks: network.yaml
+  tags: [ network ]

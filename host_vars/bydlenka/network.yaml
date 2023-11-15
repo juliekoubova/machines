@@ -1,0 +1,4 @@
+net_ifaces:
+  - name: enp3s0
+    inet: dhcp
+    inet6: auto

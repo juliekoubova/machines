@@ -1,13 +1,13 @@
 dependencies:
   - role: bridge-if
     vars:
-      ifname: br8
+      ifname: br0
       bridge_ports:
-        - eth0.8
+        - enp4s0
 
   - role: qemu-bridge
     vars:
-      ifname: br8
+      ifname: br0
 
   - role: qemu-vm
     vars:
@@ -15,7 +15,7 @@ dependencies:
       vmname: haos
       memory: 16G
       net0: bridge
-      net0_br: br8
+      net0_br: br0
       disk0_file: /data/vm/haos/disk0.img
       disk0_format: raw
       ovmf: yes
