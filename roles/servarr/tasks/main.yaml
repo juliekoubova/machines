@@ -68,6 +68,9 @@
       traefik.http.routers.qbittorrent.rule: Host(`qbittorrent.totoro.family`) 
       traefik.http.routers.qbittorrent.entrypoints: websecure
       traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
+    publish:
+      - '51413:51413/tcp'
+      - '51413:51413/udp'
 
 - name: FileBot Node container
   containers.podman.podman_container:
