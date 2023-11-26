@@ -1,4 +1,11 @@
+- name: go2rtc configuration
+  tags: [ go2rtc ]
+  ansible.builtin.copy:
+    src: "{{ inventory_hostname }}/go2rtc.secrets.yaml"
+    dest: /etc/go2rtc.yaml
+
 - name: go2rtc container
+  tags: [ podman, go2rtc ]
   containers.podman.podman_container:
     name: go2rtc
     image: alexxit/go2rtc
