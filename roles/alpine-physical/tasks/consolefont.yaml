@@ -1,0 +1,13 @@
+- name: Select console font
+  ansible.builtin.lineinfile:
+    dest: /etc/conf.d/consolefont
+    line: 'consolefont="{{ consolefont }}"'
+    regex: '^consolefont='
+  when: consolefont
+
+- name: Enable and start console font on boot
+  ansible.builtin.service:
+    name: consolefont
+    runlevel: boot
+    enabled: yes
+

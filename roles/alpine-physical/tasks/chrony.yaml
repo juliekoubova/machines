@@ -1,0 +1,21 @@
+- name: Install chrony
+  community.general.apk:
+    name: chrony
+
+- name: Uninstall openntpd
+  community.general.apk:
+    name: openntpd
+    state: absent
+
+- name: Disable ntpd
+  ansible.builtin.service:
+    enabled: no
+    name: ntpd
+    state: stopped
+
+- name: Run chrony on startup
+  ansible.builtin.service:
+    enabled: yes
+    name: chronyd
+    state: started
+

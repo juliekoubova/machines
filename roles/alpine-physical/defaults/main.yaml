@@ -1,6 +1,2 @@
 autologin:
 consolefont: ter-114b.psf.gz
-services:
-  - { name: openntpd } 
-  - { name: sshd }
-  - { name: syslog }

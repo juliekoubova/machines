@@ -1,13 +1,3 @@
-- name: Create /etc/network/interfaces.d
-  ansible.builtin.file:
-    path: /etc/network/interfaces.d
-    state: directory
-
-- name: Source /etc/network/interfaces.d
-  ansible.builtin.lineinfile:
-    path: /etc/network/interfaces
-    line: 'source-directory /etc/network/interfaces.d'
-
 - name: Ensure @testing repo
   tags: apk
   ansible.builtin.lineinfile:
@@ -38,26 +28,22 @@
     cmd: "setup-timezone -i {{ timezone }}"
     creates: /etc/localtime
 
+- name: Enable and start syslog
+  ansible.builtin.service:
+    name: syslog
+    enabled: yes
+    state: started
+
 - name: Clear MOTD
   ansible.builtin.copy:
     dest: /etc/motd
     content: ""
 
-- name: Disable root SSH login 
-  ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_config
-    line: 'PermitRootLogin no'
-    regex: '^#?PermitRootLogin'
-    insertbefore: BOF # first one wins with sshd_config
-  tags: [ ssh ]
+- ansible.builtin.import_tasks: network.yaml
+  tags: [ network ]
 
-- name: Disable SSH password authentication
-  ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_config
-    line: 'PasswordAuthentication no'
-    regex: '^#?PasswordAuthentication'
-    insertbefore: BOF # first one wins with sshd_config
-  tags: [ ssh ]
+- ansible.builtin.import_tasks: sshd.yaml
+  tags: [ sshd ]
 
 - name: Timeout login shells
   ansible.builtin.copy:

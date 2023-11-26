@@ -1,0 +1,19 @@
+- name: Configure sshd
+  ansible.builtin.service:
+    name: sshd
+    enabled: "{{ sshd_enabled }}"
+    state: "{{ 'started' if sshd_enabled else 'stopped' }}"
+
+- name: Disable root SSH login 
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'PermitRootLogin no'
+    regex: '^#?PermitRootLogin'
+    insertbefore: BOF # first one wins with sshd_config
+
+- name: Disable SSH password authentication
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'PasswordAuthentication no'
+    regex: '^#?PasswordAuthentication'
+    insertbefore: BOF # first one wins with sshd_config

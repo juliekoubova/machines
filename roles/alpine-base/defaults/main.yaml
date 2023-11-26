@@ -5,3 +5,5 @@ postmarketos_mirror: http://mirror.postmarketos.org/postmarketos
 postmarketos_release: master
 apk_extra_repos: []
 shell_tmout: 300
+sshd_enabled: true
+syslog_enabled: true

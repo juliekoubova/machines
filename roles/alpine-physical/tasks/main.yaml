@@ -36,41 +36,11 @@
     dest: /etc/inittab
     src: inittab
 
-- name: Select console font
-  ansible.builtin.lineinfile:
-    dest: /etc/conf.d/consolefont
-    line: 'consolefont="{{ consolefont }}"'
-    regex: '^consolefont='
-  when: consolefont
-
-- name: Enable and start console font on boot
+- name: Enable and start syslog
   ansible.builtin.service:
-    name: consolefont
-    runlevel: boot
-    enabled: yes
-
-- name: Enable and start services
-  ansible.builtin.service:
-    name: "{{ item.name }}"
-    runlevel: "{{ item.runlevel | default('default') }}"
+    name: syslog
     enabled: yes
     state: started
-  loop: "{{ services }}"
-
-# Needed for MSI Z790 boards to report fan speed
-- when: force_nct6683
-  block:
-    - name: MSI Z70 nct6683 workaround
-      ansible.builtin.include_role:
-        name: alpine-kernel-module
-      vars:
-        module: nct6683
-
-    - name: Force nct6683
-      ansible.builtin.lineinfile:
-        create: yes
-        dest: /etc/modprobe.d/nct6683.conf
-        line: options nct6683 force=1
 
 - name: Allow wheel to reboot and poweroff
   tags: [ doas ]
@@ -79,5 +49,12 @@
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 
-- ansible.builtin.include_tasks: network.yaml
-  tags: [ network ]
+- ansible.builtin.import_tasks: chrony.yaml
+  tags: [ chrony ]
+
+- ansible.builtin.import_tasks: consolefont.yaml
+  tags: [ consolefont ]
+  when: consolefont
+
+- ansible.builtin.import_tasks: nct6683.yaml
+  when: force_nct6683

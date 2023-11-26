@@ -1,0 +1,12 @@
+# Needed for MSI Z790 boards to report fan speed
+- name: MSI Z70 nct6683 workaround
+  ansible.builtin.include_role:
+    name: alpine-kernel-module
+  vars:
+    module: nct6683
+
+- name: Force nct6683
+  ansible.builtin.lineinfile:
+    create: yes
+    dest: /etc/modprobe.d/nct6683.conf
+    line: options nct6683 force=1
