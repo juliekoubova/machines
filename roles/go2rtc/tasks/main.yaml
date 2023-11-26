@@ -1,0 +1,12 @@
+- name: go2rtc container
+  containers.podman.podman_container:
+    name: go2rtc
+    image: alexxit/go2rtc
+    restart_policy: always
+    cmd_args: --no-healthcheck # fuck systemd timers
+    env:
+      TZ: "{{ timezone }}"
+    volume:
+      - "/etc/go2rtc.yaml:/config/go2rtc.yaml"
+
+

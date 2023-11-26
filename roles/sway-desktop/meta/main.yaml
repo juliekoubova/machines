@@ -1,1 +1,1 @@
-dependencies: [ sway ]
+dependencies: [ avahi, sway ]
