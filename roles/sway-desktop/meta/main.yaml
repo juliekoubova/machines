@@ -1,1 +1,1 @@
-dependencies: [ avahi, sway ]
+dependencies: [ avahi, pipewire, sway ]

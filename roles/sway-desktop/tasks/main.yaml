@@ -1,4 +1,5 @@
 - name: Install packages
+  tags: [ sway ]
   community.general.apk:
     name: 
       - chromium
@@ -22,9 +23,15 @@
       - wvkbd
 
 - name: Add users to plugdev group
+  tags: [ sway ]
   ansible.builtin.user:
     name: "{{ item }}"
     append: yes
     groups: [ plugdev ]
   loop: "{{ sway_users }}"
 
+- name: Run pipewire-launcher
+  tags: [ sway, pipewire ]
+  ansible.builtin.copy:
+    dest: /etc/sway/config.d/pipewire
+    content: exec /usr/libexec/pipewire-launcher

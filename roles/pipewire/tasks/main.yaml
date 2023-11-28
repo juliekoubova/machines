@@ -1,0 +1,6 @@
+- name: Install pipewire packages
+  community.general.apk:
+    name: 
+      - pipewire
+      - pipewire-pulse
+      - wireplumber

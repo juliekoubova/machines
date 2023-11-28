@@ -1,14 +1,17 @@
 - name: Setup XDG_RUNTIME_DIR
+  tags: [ sway ]
   ansible.builtin.copy:
     dest: /etc/profile.d/julie-xdg-runtime-dir.sh
     src: julie-xdg-runtime-dir.sh
 
 - name: Setup udev rules
+  tags: [ sway, udev ]
   ansible.builtin.copy:
     dest: /etc/udev/rules.d/julie-backlight.rules
     src: julie-backlight.rules
 
 - name: Install packages
+  tags: [ sway ]
   community.general.apk:
     name: 
       - capitaine-cursors
@@ -61,6 +64,7 @@
     line: "permit nopass :wheel cmd zzz-if-no-ssh"
 
 - name: Suspend when power button pressed
+  tags: [ sway ]
   ansible.builtin.copy:
     dest: /etc/acpi/PWRF/00000080
     mode: 0755
@@ -68,3 +72,8 @@
       #!/bin/sh
       exec swayzzz
 
+- name: Create /etc/sway/config.d
+  tags: [ sway ]
+  ansible.builtin.file:
+    dest: /etc/sway/config.d
+    state: directory
