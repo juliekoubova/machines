@@ -1,0 +1,9 @@
+- name: Install bluetooth packages
+  community.general.apk:
+    name: bluez
+
+- name: Enable and start bluetooth
+  ansible.builtin.service:
+    name: bluetooth
+    state: started
+    enabled: yes

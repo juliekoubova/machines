@@ -49,6 +49,10 @@
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 
+- ansible.builtin.import_tasks: bluetooth.yaml
+  when: bluetooth
+  tags: [ bluetooth ]
+
 - ansible.builtin.import_tasks: chrony.yaml
   tags: [ chrony ]
 
