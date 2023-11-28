@@ -10,10 +10,3 @@
     src: dhcpcd.conf.j2
   tags: [ dhcpcd ]
 
-- name: Start dhcpcd
-  tags: [ dhcpcd ]
-  ansible.builtin.service:
-    name: dhcpcd
-    enabled: yes
-    state: started
-
