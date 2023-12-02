@@ -3,7 +3,6 @@
   community.general.apk:
     name: 
       - chromium
-      - firefox
       - font-awesome
       - font-cascadia-code-nerd
       - font-dejavu

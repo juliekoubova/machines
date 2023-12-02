@@ -1,0 +1,11 @@
+- name: Install packages
+  tags: [ firefox ]
+  community.general.apk:
+    name: [ firefox, gcompat, patchelf ]
+
+- name: Install launch script
+  tags: [ firefox ]
+  ansible.builtin.copy:
+    dest: /usr/local/bin/firefox
+    src: firefox
+    mode: "755"
