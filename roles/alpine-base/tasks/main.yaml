@@ -1,13 +1,6 @@
 - ansible.builtin.import_tasks: apk.yaml
   tags: apk
 
-- name: Install packages
-  tags: apk
-  community.general.apk:
-    name:
-      - curl
-      - doas
-      - iputils # ping without root
 
 - name: Set timezone
   ansible.builtin.command:
@@ -28,10 +21,10 @@
     content: ""
 
 - ansible.builtin.import_tasks: network.yaml
-  tags:  network 
+  tags: network 
 
 - ansible.builtin.import_tasks: sshd.yaml
-  tags:  sshd 
+  tags: sshd 
 
 - name: Timeout login shells
   ansible.builtin.copy:
