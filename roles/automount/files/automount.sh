@@ -28,6 +28,7 @@ if [ "${action}" == "remove" ]; then
     log "Unmounting ${mountpoint}"
     notify "Unmounting ${mountpoint}"
     umount "${mountpoint}" || fail "Failed to unmount"
+    rmdir "${mountpoint}"
   fi
   exit 0
 fi
