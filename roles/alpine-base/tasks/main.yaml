@@ -1,23 +1,9 @@
-- name: Ensure @testing repo
+- ansible.builtin.import_tasks: apk.yaml
   tags: apk
-  ansible.builtin.lineinfile:
-    dest: /etc/apk/repositories
-    line: "@testing {{ alpine_mirror }}/edge/testing"
-    regexp: "^@testing\\s"
-    insertafter: EOF
-
-- name: Ensure extra repos
-  tags: apk
-  loop: "{{ apk_extra_repos }}"
-  ansible.builtin.lineinfile:
-    dest: /etc/apk/repositories
-    line: "{{ item }}"
-    insertafter: EOF
 
 - name: Install packages
   tags: apk
   community.general.apk:
-    update_cache: yes
     name:
       - curl
       - doas
@@ -29,6 +15,8 @@
     creates: /etc/localtime
 
 - name: Enable and start syslog
+  when: syslog_enabled
+  tags: syslog
   ansible.builtin.service:
     name: syslog
     enabled: yes
@@ -40,10 +28,10 @@
     content: ""
 
 - ansible.builtin.import_tasks: network.yaml
-  tags: [ network ]
+  tags:  network 
 
 - ansible.builtin.import_tasks: sshd.yaml
-  tags: [ sshd ]
+  tags:  sshd 
 
 - name: Timeout login shells
   ansible.builtin.copy:

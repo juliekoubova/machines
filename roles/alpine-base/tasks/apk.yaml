@@ -1,0 +1,29 @@
+- name: Ensure @testing repo
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "@testing {{ alpine_mirror }}/edge/testing"
+    regexp: "^@testing\\s"
+    insertafter: EOF
+
+- name: Ensure extra repos
+  loop: "{{ apk_extra_repos }}"
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "{{ item }}"
+    insertafter: EOF
+
+- name: Periodically update apk
+  when: apk_update_period | default(false)
+  ansible.builtin.copy:
+    dest: "/etc/periodic/{{ apk_update_period }}/apk-update.sh"
+    mode: '755'
+    content: |
+      #!/bin/sh
+      exec /sbin/apk update
+
+- name: Install basic packages
+  community.general.apk:
+    name:
+      - curl
+      - doas
+      - iputils # ping without root
