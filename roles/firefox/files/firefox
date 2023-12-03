@@ -3,9 +3,10 @@
 patch_widevinecdm() {
   local _gcompat="/lib/libgcompat.so.0"
   local _widevine="libwidevinecdm.so"
+  local _profile="${HOME}/.mozilla/firefox"
 
   echo "Running on Musl Linux, attempting to patch widevinecdm" >&2
-  if [ ! -e "${_gcompat}" ]; then
+  if ! [ -e "${_gcompat}" ]; then
     echo "${_gcompat} not found, try \`apk add gcompat\`" >&2
     return 1
   fi
@@ -15,15 +16,19 @@ patch_widevinecdm() {
     return 1
   fi
 
-  find "${HOME}/.mozilla/firefox" -name "${_widevine}" | while read lib; do
+  if ! [ -d "${_profile}" ]; then
+    echo "${_profile} doesn't exist" >&2
+    return 1
+  fi
+
+  find "${_profile}" -name "${_widevine}" | while read -r lib; do
     echo "Patching $lib"
     patchelf --add-needed "${_gcompat}" "${lib}"
-    export MOZ_DISABLE_GMP_SANDBOX=1
   done
 }
 
 if [ `uname` = "Linux" ] && ldd --version 2>&1 | grep -q musl; then
-  patch_widevinecdm
+  patch_widevinecdm && export MOZ_DISABLE_GMP_SANDBOX=1
 fi
 
 exec nohup /usr/bin/firefox "$@" >/dev/null 2>&1 &
