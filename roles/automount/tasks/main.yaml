@@ -1,0 +1,19 @@
+- name: Ensure /usr/local/sbin
+  tags: [automount]
+  ansible.builtin.file:
+    dest: /usr/local/sbin
+    state: directory
+
+- name: Copy automount script
+  tags: [automount]
+  ansible.builtin.copy:
+    src: automount.sh
+    dest: /usr/local/sbin/automount.sh
+    mode: "0755"
+
+- name: Copy udev rules
+  tags: [automount, udev]
+  notify: 'reload udev rules'
+  ansible.builtin.copy:
+    src: automount.rules
+    dest: /etc/udev/rules.d/90-automount.rules
