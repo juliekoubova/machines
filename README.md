@@ -1,6 +1,6 @@
 # Machine Provisioning Scripts
 
-## Some Maybe Useful Stuff
+## Maybe Some Useful Stuff
 
 ### [notify-send-all.sh](https://github.com/juliekoubova/machines/blob/main/roles/sway-desktop/files/notify-send-all.sh)
 A hacky script that sends a FreeDesktop notification to all DBus sessions. Works by enumerating `run-dbus-session` processes, 
