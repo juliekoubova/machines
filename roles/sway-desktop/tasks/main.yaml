@@ -35,3 +35,10 @@
   ansible.builtin.copy:
     dest: /etc/sway/config.d/pipewire
     content: exec /usr/libexec/pipewire-launcher
+
+- name: Install notify-send-all
+  tags: [ sway, notify-send-all ]
+  ansible.builtin.copy:
+    src: notify-send-all.sh
+    dest: /usr/local/bin/notify-send-all
+    mode: '755'

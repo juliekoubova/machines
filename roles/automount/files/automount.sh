@@ -17,9 +17,16 @@ fail() {
   exit 1
 }
 
+notify() {
+  if [ -x /usr/local/bin/notify-send-all ]; then
+    /usr/local/bin/notify-send-all --expire-time=5000 "automount.sh" "$1"
+  fi
+}
+
 if [ "${action}" == "remove" ]; then
   if mountpoint -q "${mountpoint}"; then
     log "Unmounting ${mountpoint}"
+    notify "Unmounting ${mountpoint}"
     umount "${mountpoint}" || fail "Failed to unmount"
   fi
   exit 0
@@ -42,6 +49,7 @@ fi
 case "${fstype}" in
   vfat)
     log "Mounting as vfat"
+    notify "Mounting ${mountpoint} as vfat"
     mount -t vfat -o "${AUTOMOUNT_OPTS},dmask=002,fmask=113,gid=${gid}" "${device_path}" "${mountpoint}" \
       || fail "Failed to mount"
     exit 0
