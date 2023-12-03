@@ -12,6 +12,7 @@
       - font-noto-emoji
       - font-noto-extra
       - gvfs-smb
+      - mako
       - libfido2
       - swaybg
       - swayidle
