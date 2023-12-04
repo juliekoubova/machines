@@ -50,7 +50,7 @@
   loop: [ poweroff, reboot ]
 
 - ansible.builtin.import_tasks: bluetooth.yaml
-  when: bluetooth
+  when: bluetooth | default(false)
   tags: [ bluetooth ]
 
 - ansible.builtin.import_tasks: chrony.yaml

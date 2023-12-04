@@ -3,7 +3,7 @@ dependencies:
     vars:
       ifname: br0
       bridge_ports:
-        - enp4s0
+        - enp5s0
 
   - role: qemu-bridge
     vars:
