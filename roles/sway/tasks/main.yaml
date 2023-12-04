@@ -1,5 +1,12 @@
+- name: Create /run/user
+  tags: [ sway, xdg ]
+  ansible.builtin.file:
+    state: directory
+    dest: /run/user
+    mode: '1777'
+
 - name: Setup XDG_RUNTIME_DIR
-  tags: [ sway ]
+  tags: [ sway, xdg ]
   ansible.builtin.copy:
     dest: /etc/profile.d/julie-xdg-runtime-dir.sh
     src: julie-xdg-runtime-dir.sh
