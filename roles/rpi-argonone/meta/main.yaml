@@ -1,0 +1,7 @@
+dependencies:
+  - name: rpi-bootloader
+    vars: { usercfg_vars: { dtparam: i2c_arm=on } }
+  - name: alpine-kernel-module
+    vars: { module: 'i2c-bcm2708' }
+  - name: alpine-kernel-module
+    vars: { module: 'i2c-dev' }

@@ -4,7 +4,7 @@
     shell: "{{ shell | default(omit) }}"
     group: "{{ user_group | default(omit) }}"
     groups: "{{ user_groups | default(omit) }}"
-    append: true
+    append: "{{ user_groups | default(false) | bool }}"
     uid: "{{ uid | default(omit) }}"
     password: "*"
     update_password: on_create

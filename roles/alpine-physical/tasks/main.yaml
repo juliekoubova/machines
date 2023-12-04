@@ -42,11 +42,6 @@
     enabled: yes
     state: started
 
-- name: Argonone
-  when: argonone
-  ansible.builtin.include_tasks:
-    file: argonone.yaml
-
 - name: Allow wheel to reboot and poweroff
   tags: [ doas ]
   ansible.builtin.lineinfile:

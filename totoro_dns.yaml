@@ -1,4 +1,8 @@
 #!/usr/bin/env ansible-playbook
+- hosts: backup-ns
+  roles:
+    - alpine-physical
+    - rpi-argonone
 - hosts: totoro_dns
   roles:
     - role: alpine-base

@@ -1,23 +1,6 @@
-- name: Enable I2C
-  ansible.builtin.include_role:
-    name: rpi-bootloader
-  vars:
-    usercfg_vars:
-      dtparam: i2c_arm=on
-
-- name: Modprobe I2C
-  ansible.builtin.include_role:
-    name: alpine-kernel-module
-  vars:
-    module: '{{ item }}'
-  loop:
-    - i2c-bcm2708
-    - i2c-dev
-
 - name: Install argonone dependencies
   tags: apk
   community.general.apk:
-    update_cache: yes
     name: [ py3-smbus, py3-rpigpio ]
 
 - name: Copy argonone script
@@ -37,8 +20,8 @@
     src: argononed-init
     mode: '755'
 
-- name: "Enable and start argonone script"
+- name: Enable and start argonone script
   ansible.builtin.service:
-    name: "argononed"
+    name: argononed
     enabled: yes
     state: started
