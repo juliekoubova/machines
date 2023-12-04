@@ -8,6 +8,12 @@
     src: dnsmasq.conf.j2
   register: config
 
+- name: Configure dnsmasq service
+  ansible.builtin.template:
+    dest: /etc/conf.d/dnsmasq
+    src: confd.j2
+  register: config
+
 - name: Stop dnsmasq
   when: config.changed
   ansible.builtin.service:

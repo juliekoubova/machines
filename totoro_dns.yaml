@@ -1,6 +1,7 @@
 #!/usr/bin/env ansible-playbook
 - hosts: totoro_dns
   roles:
+    - role: alpine-base
     - role: dhcpcd
     - role: dnsmasq
     - role: user-ansible

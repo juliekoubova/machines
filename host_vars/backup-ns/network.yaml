@@ -1,0 +1,4 @@
+net_ifaces:
+  - name: eth0
+    inet: dhcp
+    inet6: auto
