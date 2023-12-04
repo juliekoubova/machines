@@ -1,2 +1,5 @@
+argonone: false
 autologin:
 consolefont: ter-114b.psf.gz
+force_nct6683: false
+
