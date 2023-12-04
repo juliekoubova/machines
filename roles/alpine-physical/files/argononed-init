@@ -1,0 +1,7 @@
+#!/sbin/openrc-run
+
+name="Argononed"
+command=/usr/local/bin/argononed.py
+command_background=yes
+pidfile=/run/$RC_SVCNAME.pid
+required_files=/etc/argononed.conf

@@ -1,14 +1,15 @@
 - name: Ensure device tree overlays
   ansible.builtin.lineinfile:
     dest: /boot/usercfg.txt
+    create: true
     line: "dtoverlay={{ item }}"
   loop: "{{ usercfg_dtoverlays }}"
 
 - name: Ensure bootloader configuration
   ansible.builtin.lineinfile:
     dest: /boot/usercfg.txt
+    create: true
     state: "{{ 'present' if item.value else 'absent' }}"
     line: "{{ item.key }}={{ item.value }}"
     regex: "^\\s*{{ item.key }}\\s*="
   loop: "{{ usercfg_vars | dict2items }}"
-    

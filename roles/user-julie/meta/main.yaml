@@ -1,5 +1,6 @@
 dependencies:
   - role: ssh-user
     user: julie
+    user_groups: wheel
     github_usernames: [ juliekoubova ]
 

@@ -42,10 +42,16 @@
     enabled: yes
     state: started
 
+- name: Argonone
+  when: argonone
+  ansible.builtin.include_tasks:
+    file: argonone.yaml
+
 - name: Allow wheel to reboot and poweroff
   tags: [ doas ]
   ansible.builtin.lineinfile:
     dest: /etc/doas.d/doas.conf
+    mode: '644'
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 

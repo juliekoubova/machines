@@ -1,0 +1,4 @@
+#!/usr/bin/env ansible-playbook
+- hosts: backup-ns
+  roles:
+    - role: alpine-physical

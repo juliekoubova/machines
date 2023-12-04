@@ -1,5 +1,6 @@
 dependencies:
   - role: ssh-user
     user: tereza
+    user_groups: wheel
     github_usernames: [ the-ress ]
 
