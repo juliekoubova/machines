@@ -1,0 +1,20 @@
+- name: Setup julie-xdg-runtime-dir service
+  tags: xdg
+  ansible.builtin.copy:
+    mode: '0755'
+    dest: /etc/init.d/julie-xdg-runtime-dir
+    src: initd
+
+- name: Enable julie-xdg-runtime-dir service
+  tags: xdg
+  ansible.builtin.service:
+    name: julie-xdg-runtime-dir
+    state: started
+    enabled: yes
+
+- name: Setup XDG_RUNTIME_DIR
+  tags: xdg
+  ansible.builtin.copy:
+    dest: /etc/profile.d/julie-xdg-runtime-dir.sh
+    src: profiled.sh
+

@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+description="Creates the /run/user directory"
+
+start() {
+  ebegin "/run/user: Creating directory"
+  mkdir -p /run/user || return 1
+  eend $?
+
+  ebegin "/run/user: Setting permissions"
+  chmod 1777 /run/user
+  eend $?
+}
