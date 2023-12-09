@@ -2,9 +2,8 @@
   community.general.apk:
     name: [ zfs-udev, zfs-lts, zfs ]
 
-- name: Enable and start zfs services
+- name: Enable zfs services
   ansible.builtin.service:
     name: "{{ item }}"
-    state: started
     enabled: yes
-  loop: [ zfs-import, zfs-mount ]
+  loop: [ zfs-import, zfs-load-key, zfs-mount ]
