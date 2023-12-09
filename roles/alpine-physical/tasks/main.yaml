@@ -23,14 +23,6 @@
     cmd: setup-devd -C udev
     creates: /etc/runlevels/sysinit/udev
 
-- name: Install zfs packages
-  community.general.apk:
-    name:
-      - zfs-udev
-      - zfs-lts
-      - zfs
-  when: zfs 
-
 - name: Use mingetty
   ansible.builtin.template:
     dest: /etc/inittab
@@ -60,6 +52,10 @@
 - ansible.builtin.import_tasks: consolefont.yaml
   tags: [ consolefont ]
   when: consolefont
+
+- ansible.builtin.import_tasks: zfs.yaml
+  tags: [ zfs ]
+  when: zfs
 
 - ansible.builtin.import_tasks: nct6683.yaml
   when: force_nct6683
