@@ -6,8 +6,9 @@ fi
 {% for target in backup_targets | dict2items %}
 {% if target.key != 'local' %}
 flock --nonblock '{{ backup_home }}/send.{{ target.key }}.lock' zfs-autobackup \
-  --filter-properties mountpoint,refreservation \
-  --set-properties readonly=on \
+  --filter-properties mountpoint,refreservation,autobackup:{{ target.key }} \
+  --destroy-incompatible \
+  --set-properties readonly=on,canmount=noauto \
   --force \
   --no-snapshot \
   --ssh-target '{{ target.key }}' \
