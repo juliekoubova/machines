@@ -28,6 +28,9 @@
 
     - role: 1password-cli
 
+    - role: xorg-server
+      xorg_users: [ julie ]
+
   tasks:
     - name: Install firmware
       community.general.apk:

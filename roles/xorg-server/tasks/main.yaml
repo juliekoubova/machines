@@ -1,0 +1,16 @@
+- name: Install xorg
+  tags: [ xorg ]
+  community.general.apk:
+    name:
+      - xf86-input-evdev
+      - xf86-input-libinput
+      - xorg-server
+      - xinit
+
+- name: Add users to groups
+  tags: [ xorg ]
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: yes
+    groups: [ audio, input, video ]
+  loop: "{{ xorg_users }}"
