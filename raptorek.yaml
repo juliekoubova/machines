@@ -16,6 +16,8 @@
 
     - role: sway-desktop
       sway_users: [ julie ]
+    
+    - role: flatpak
 
     - role: cups
       tags: [ cups ]
