@@ -1,0 +1,14 @@
+- name: Install zfs-autobackup
+  community.general.apk:
+    name: py3-zfs-autobackup@testing
+
+- name: Ensure apk commit-hook.d
+  ansible.builtin.file:
+    dest: /etc/apk/commit_hooks.d
+    state: directory
+
+- name: zfs-autobackup apk commit hook
+  ansible.builtin.copy:
+    src: zfs-autobackup.sh
+    dest: /etc/apk/commit_hooks.d/zfs-autobackup.sh
+    mode: '755'

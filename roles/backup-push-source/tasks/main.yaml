@@ -1,5 +1,5 @@
 - name: Install zfs-autobackup
-  tags: [ apk ]
+  tags: [ apk, zfs ]
   community.general.apk:
     name: py3-zfs-autobackup@testing
 

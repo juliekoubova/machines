@@ -42,6 +42,11 @@
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 
+- ansible.builtin.import_role:
+    name: backup-apk-commit-hook
+  tags: [ apk, zfs, autobackup ]
+  when: zfs | default(false)
+
 - ansible.builtin.import_tasks: bluetooth.yaml
   when: bluetooth | default(false)
   tags: [ bluetooth ]
