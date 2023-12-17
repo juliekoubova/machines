@@ -1,0 +1,35 @@
+- name: Credentials directory
+  tags: cifs
+  ansible.builtin.file:
+    dest: /etc/cifs-credentials
+    mode: '0600'
+    state: directory
+
+- name: Credentials file
+  tags: cifs
+  ansible.builtin.copy:
+    dest: "/etc/cifs-credentials/{{ server }}"
+    mode: '0600'
+    content: |
+      username={{ credentials.username }}
+      password={{ credentials.password }}
+      domain={{ credentials.domain | d(server) }}
+
+- name: Mount directory
+  tags: cifs
+  ansible.builtin.file:
+    dest: /etc/cifs-credentials
+    mode: '0600'
+    state: directory
+
+- name: fstab entry
+  tags: [cifs, fstab]
+  ansible.builtin.lineinfile:
+    dest: /etc/fstab
+    regexp: "^//{{ server }}/{{ share }}"
+    line: >
+      //{{ server }}/{{ share }}
+      {{ mount }}
+      cifs
+      credentials=/etc/cifs-credentials/{{ server }},uid={{ uid | d(0) }},gid={{ gid | d(0) }},file_mode=0644,dir_mode=0755
+

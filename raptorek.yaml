@@ -33,6 +33,14 @@
     - role: xorg-server
       xorg_users: [ julie ]
 
+    - role: cifs-mount
+      credentials: "{{ cifs_credentials_home }}"
+      mount: /cifs/home/config
+      server: home.totoro.family
+      share: config
+      uid: 1000
+      gid: 1000
+
   tasks:
     - name: Install firmware
       community.general.apk:
