@@ -78,7 +78,7 @@
 
 - name: Allow doas send without password
   ansible.builtin.lineinfile:
-    dest: /etc/doas.d/doas.conf
+    dest: /etc/doas.conf
     line: "permit nopass :wheel as {{ backup_user }} cmd {{ backup_home }}/send.sh"
 
 - name: Ensure /etc/zzz.d

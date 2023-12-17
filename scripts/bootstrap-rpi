@@ -173,7 +173,7 @@ EOF
 
 ovl_doas() {
   ovl_apk_add doas
-  ovl_file etc/doas.d/doas.conf <<EOF
+  ovl_file etc/doas.conf <<EOF
 permit persist :wheel
 permit nopass ansible
 EOF

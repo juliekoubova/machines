@@ -11,7 +11,7 @@ if [ `uname` = "FreeBSD" ]; then
   doasconf=/usr/local/etc/doas.conf
 elif command -v apk > /dev/null; then
   platform=alpine
-  doasconf=/etc/doas.d/doas.conf
+  doasconf=/etc/doas.conf
 else
   echo unknown OS >&2
   exit 1

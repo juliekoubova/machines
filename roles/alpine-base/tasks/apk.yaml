@@ -1,3 +1,17 @@
+- name: Ensure community repo
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "{{ alpine_mirror }}/{{ alpine_release }}/community"
+    regexp: '/v\d+\.\d+/community$'
+    insertafter: BOF
+
+- name: Ensure main repo
+  ansible.builtin.lineinfile:
+    dest: /etc/apk/repositories
+    line: "{{ alpine_mirror }}/{{ alpine_release }}/main"
+    regexp: '/v\d+\.\d+/main$'
+    insertafter: BOF
+
 - name: Ensure @testing repo
   ansible.builtin.lineinfile:
     dest: /etc/apk/repositories

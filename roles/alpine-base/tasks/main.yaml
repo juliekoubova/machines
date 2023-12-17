@@ -1,7 +1,6 @@
 - ansible.builtin.import_tasks: apk.yaml
   tags: apk
 
-
 - name: Set timezone
   ansible.builtin.command:
     cmd: "setup-timezone -i {{ timezone }}"

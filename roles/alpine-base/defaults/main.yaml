@@ -1,5 +1,5 @@
 alpine_mirror: https://dl-cdn.alpinelinux.org/alpine
-alpine_release: "{{ 'edge' if postmarketos else 'v3.18' }}"
+alpine_release: "{{ 'edge' if postmarketos else 'v3.19' }}"
 postmarketos: false
 postmarketos_mirror: http://mirror.postmarketos.org/postmarketos
 postmarketos_release: master

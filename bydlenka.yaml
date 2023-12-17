@@ -2,7 +2,7 @@
 - hosts: bydlenka
   roles:
     - role: alpine-base
-      alpine_release: v3.18
+      alpine_release: v3.19
 
     - role: user-ansible
     - role: user-julie
