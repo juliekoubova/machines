@@ -53,4 +53,6 @@
 
     - role: traefik
       tags: [ podman, servarr, traefik ]
-    
+
+    - role: prusa-connect-rtsp
+      tags: [ prusa_connect_rtsp ]
