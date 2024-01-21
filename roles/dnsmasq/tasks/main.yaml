@@ -12,10 +12,10 @@
   ansible.builtin.template:
     dest: /etc/conf.d/dnsmasq
     src: confd.j2
-  register: config
+  register: service_config
 
 - name: Stop dnsmasq
-  when: config.changed
+  when: config.changed or service_config.changed
   ansible.builtin.service:
     name: dnsmasq
     state: stopped
