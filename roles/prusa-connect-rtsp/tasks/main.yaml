@@ -1,0 +1,9 @@
+- name: Prusa Connect RTSP container
+  containers.podman.podman_container:
+    image: jtee3d/prusa_connect_rtsp:latest
+    name: prusa_connect_rtsp
+    env:
+      TZ: "{{ timezone }}"
+      CAMERA_URLS: "{{ prusa_connect_rtsp_cameras | map(attribute='stream') | join(',') }}"
+      TOKENS: "{{ prusa_connect_rtsp_cameras | map(attribute='token') | join(',') }}"
+    restart_policy: always
