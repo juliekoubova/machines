@@ -1,1 +1,1 @@
-data_dir: /data/postgres15
+postgresql_version: 16

@@ -10,7 +10,7 @@
     line: rc_cgroup_mode="hybrid"
     regex: "^rc_group_mode="
 
-- name: Enable and services
+- name: Enable needed services
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: yes

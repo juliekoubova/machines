@@ -2,7 +2,7 @@
 - hosts: bydlenka
   roles:
     - role: alpine-base
-      alpine_release: v3.19
+      alpine_release: v3.20
 
     - role: user-ansible
     - role: user-julie
@@ -37,8 +37,7 @@
       data_dir: /data/backups/haos
 
     - role: postgresql
-      data_dir: /data/postgres15
-      tags: [ postgres, haos ]
+      tags: [ haos ]
 
     - role: dnsmasq
       tags: [ dnsmasq ]
