@@ -1,0 +1,6 @@
+- name: Setup QMK udev rules
+  tags: [ udev, qmk ]
+  notify: 'reload udev rules'
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/julie-qmk.rules
+    src: julie-qmk.rules

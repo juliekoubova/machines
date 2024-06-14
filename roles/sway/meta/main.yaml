@@ -1,2 +1,2 @@
-dependencies: [ xdg ]
+dependencies: [ udev, xdg ]
 

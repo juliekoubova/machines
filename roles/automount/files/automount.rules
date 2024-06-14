@@ -1,3 +1,4 @@
+# vim:ft=udevrules
 ACTION=="add", ENV{DEVTYPE}=="partition", ENV{ID_BUS}=="usb", \
   RUN+="/usr/local/sbin/automount.sh add %k"
 ACTION=="remove", ENV{DEVTYPE}=="partition", ENV{ID_BUS}=="usb", \

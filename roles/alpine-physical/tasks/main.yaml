@@ -19,6 +19,7 @@
       - sfdisk
 
 - name: Setup udev
+  tags: [udev]
   ansible.builtin.command:
     cmd: setup-devd -C udev
     creates: /etc/runlevels/sysinit/udev

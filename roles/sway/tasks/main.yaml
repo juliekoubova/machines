@@ -1,5 +1,6 @@
 - name: Setup udev rules
   tags: [ sway, udev ]
+  notify: 'reload udev rules'
   ansible.builtin.copy:
     dest: /etc/udev/rules.d/julie-backlight.rules
     src: julie-backlight.rules
