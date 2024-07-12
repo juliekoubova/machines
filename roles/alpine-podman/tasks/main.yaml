@@ -1,16 +1,18 @@
 - name: Install podman and fuse-overlayfs
-  tags: [ apk ]
+  tags: [ apk, podman ]
   community.general.apk:
     name: [ podman, fuse, fuse-overlayfs ]
     state: present
 
-- name: Configure hybrid cgroup mode
+- name: Configure unified cgroup mode
+  tags: [ podman ]
   ansible.builtin.lineinfile:
     dest: /etc/rc.conf
-    line: rc_cgroup_mode="hybrid"
+    line: rc_cgroup_mode="unified"
     regex: "^rc_group_mode="
 
 - name: Enable needed services
+  tags: [ podman ]
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: yes
@@ -18,6 +20,7 @@
   loop: [ cgroups, modules ]
 
 - name: Ensure subuid and subgid
+  tags: [ podman ]
   include_role:
     name: podman-user
   loop: "{{ podman_users }}"
@@ -25,19 +28,21 @@
     loop_var: podman_user
 
 - name: Ensure ZFS dataset
-  tags: [ zfs ]
+  tags: [ podman, zfs ]
   when: zfs_root_dataset | default(false)
   community.general.zfs:
     name: "{{ zfs_root_dataset }}/var/lib/containers"
     state: present
 
 - name: Ensure modules
+  tags: [ podman ]
   ansible.builtin.include_role:
     name: alpine-kernel-module
   loop: [ fuse, tun ]
   loop_control: { loop_var: module }
 
 - name: Enable service
+  tags: [ podman ]
   when: enable_podman_service
   ansible.builtin.service:
     name: podman
