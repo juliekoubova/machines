@@ -42,3 +42,11 @@
     src: notify-send-all.sh
     dest: /usr/local/bin/notify-send-all
     mode: '755'
+
+- name: Send TERM=xterm to SSH servers
+  tags: [ ssh ]
+  ansible.builtin.copy:
+    dest: /etc/ssh/ssh_config.d/julie-term.conf
+    content: |
+      Host *
+        SetEnv TERM=xterm-256color
