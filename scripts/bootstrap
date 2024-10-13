@@ -34,7 +34,7 @@ sshd_alpine() {
 }
 
 packages_freebsd() {
-  pkg install python311 doas curl
+  pkg install --yes python311 doas curl
 }
 
 user_freebsd() {

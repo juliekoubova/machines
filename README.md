@@ -16,7 +16,13 @@ reading their children's environment to extract the DBus socket path, and callin
 ## Bootstrap
 To bootstrap a new machine, run
 ```shell
-# wget https://raw.github.com/juliekoubova/machines/main/scripts/bootstrap -q -O - | sh
+# curl https://raw.githubusercontent.com/juliekoubova/machines/main/scripts/bootstrap | sh
+```
+
+### FreeBSD
+You need to install `curl` first:
+```shell
+# pkg install --yes curl
 ```
 
 To unlock the secrets, install `git-crypt` and run
