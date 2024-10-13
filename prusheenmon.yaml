@@ -7,6 +7,5 @@
     - role: rpi-bootloader
     - role: prusamon
     - role: user-ansible
-      github_usernames: [ juliekoubova, the-ress ]
     - role: user-julie
     - role: user-tereza

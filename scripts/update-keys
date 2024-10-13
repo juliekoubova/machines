@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+CDPATH= cd -- "$(dirname $(dirname "$0"))"
+
+_indent() {
+  cat | sed -e 's/^/  /'
+}
+
+_get_keys() {
+  curl "$1" --silent | _indent
+}
+
+_julie_src="https://juliekoubova.net/keys"
+_julie_keys=$(_get_keys "$_julie_src")
+
+_tereza_src="https://github.com/the-ress.keys"
+_tereza_keys=$(_get_keys "_tereza_src")
+
+cat >group_vars/all/ssh_keys.secrets.yaml <<EOF
+# scripts/update-keys run by ${USER}@$(hostname) on $(date)
+# ${_julie_src}
+julie_keys: |
+${_julie_keys}
+# ${_tereza_src}
+tereza_keys: |
+${_tereza_keys}
+EOF
+

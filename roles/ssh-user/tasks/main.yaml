@@ -11,10 +11,10 @@
     system: "{{ system | default(omit) }}"
   tags: [ ssh ]
 
-- name: "Download authorized_keys from GitHub for user {{ user }}"
+- name: "Add authorized keys for user {{ user }}"
+  when: "ssh_keys | default('')"
   ansible.posix.authorized_key:
     user: "{{ user }}"
-    key: "https://github.com/{{ item }}.keys"
-  loop: "{{ github_usernames }}"
+    key: "{{ ssh_keys }}"
   tags: [ ssh ]
 

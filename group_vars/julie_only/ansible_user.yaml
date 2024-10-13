@@ -1,1 +1,2 @@
-ansible_user_ssh_keys: [ juliekoubova ]
+ansible_user_ssh_keys: |
+  {{ julie_keys }}

@@ -5,6 +5,11 @@
 
 - hosts: backup_targets
   tasks:
+    - name: Add users
+      loop: [user-ansible, user-julie, user-tereza]
+      ansible.builtin.include_role:
+        name: "{{ item }}"
+
     - name: Create backup source on target
       ansible.builtin.include_role: 
         name: backup-push-target

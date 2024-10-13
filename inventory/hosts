@@ -1,6 +1,4 @@
 [alpine]
-antigone
-backup-ns
 bydlenka
 raptorek
 prusheenmon
@@ -19,27 +17,18 @@ offsite
 raptorek
 prusheenmon
 
-[totoro_dns]
-backup-ns
-bydlenka
-
-[totoro:children]
-totoro_dns
-
 [postmarketos]
-antigone
 
 [zfs]
 bydlenka
 raptorek
 
 [julie_only]
-antigone
 raptorek
 
 [julie_and_tereza]
-backup-ns
 bydlenka
+offsite
 prusheenmon
 
 [msi_z790_a]
@@ -47,4 +36,3 @@ bydlenka
 raptorek
 
 [argonone]
-backup-ns

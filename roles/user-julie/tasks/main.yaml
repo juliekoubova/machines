@@ -1,4 +1,6 @@
 - name: Install packages
+  tags: [apk]
+  when: ansible_distribution == 'Alpine'
   community.general.apk:
     name:
       - chezmoi

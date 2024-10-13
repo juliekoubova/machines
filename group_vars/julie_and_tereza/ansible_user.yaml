@@ -1,1 +1,3 @@
-ansible_user_ssh_keys: [ juliekoubova, the-ress ]
+ansible_user_ssh_keys: |
+  {{ julie_keys }}
+  {{ tereza_keys }}

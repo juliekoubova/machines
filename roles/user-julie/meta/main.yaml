@@ -2,5 +2,5 @@ dependencies:
   - role: ssh-user
     user: julie
     user_groups: wheel
-    github_usernames: [ juliekoubova ]
+    ssh_keys: "{{ julie_keys }}"
 
