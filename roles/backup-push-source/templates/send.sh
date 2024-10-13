@@ -7,6 +7,7 @@ fi
 {% if target.key != 'local' %}
 flock --nonblock '{{ backup_home }}/send.{{ target.key }}.lock' zfs-autobackup \
   --filter-properties mountpoint,autobackup:{{ target.key }},keylocation \
+  --destroy-missing 60d \
   --destroy-incompatible \
   --clear-mountpoint \
   --clear-refreservation \
