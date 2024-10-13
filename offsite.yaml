@@ -10,6 +10,12 @@
       ansible.builtin.include_role:
         name: "{{ item }}"
 
+    - name: Allow nopass doas
+      ansible.builtin.include_role:
+        name: doas-entry
+      vars:
+        line: permit nopass :wheel
+
     - name: Create backup source on target
       ansible.builtin.include_role: 
         name: backup-push-target
