@@ -1,6 +1,0 @@
-autologin: julie
-consolefont: ter-132b.psf.gz
-sway_users: [ julie ]
-podman: yes
-podman_users: [ julie ]
-

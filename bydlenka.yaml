@@ -39,9 +39,6 @@
     - role: postgresql
       tags: [ haos ]
 
-    - role: dnsmasq
-      tags: [ dnsmasq ]
-
     - role: servarr
       zfs_data_pool: tank
       data_dir: /data/servarr
