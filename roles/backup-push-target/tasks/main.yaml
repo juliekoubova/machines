@@ -18,6 +18,7 @@
 - name: "Configure ZFS permissions for {{ source_name }}"
   community.general.zfs_delegate_admin:
     name: "{{ zfs_backups_dataset }}/{{ source_name }}"
+    descendents: yes
     permissions:
       - acltype
       - canmount
