@@ -1,0 +1,5 @@
+argument_specs:
+  main:
+    options:
+      line:
+        required: yes

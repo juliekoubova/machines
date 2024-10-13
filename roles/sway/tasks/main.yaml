@@ -53,9 +53,9 @@
     - zzz-if-no-ssh
 
 - name: Allow doas scripts without password
-  tags: [ doas ]
-  ansible.builtin.lineinfile:
-    dest: /etc/doas.conf
+  ansible.builtin.include_role:
+    name: doas-entry
+  vars:
     line: "permit nopass :wheel cmd zzz-if-no-ssh"
 
 - name: Suspend when power button pressed

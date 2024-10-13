@@ -36,10 +36,9 @@
     state: started
 
 - name: Allow wheel to reboot and poweroff
-  tags: [ doas ]
-  ansible.builtin.lineinfile:
-    dest: /etc/doas.conf
-    mode: '644'
+  ansible.builtin.include_role:
+    name: doas-entry
+  vars:
     line: "permit nopass :wheel cmd {{ item }}"
   loop: [ poweroff, reboot ]
 

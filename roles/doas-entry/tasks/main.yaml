@@ -1,0 +1,7 @@
+- name: "Ensure doas.conf: {{ line }}"
+  tags: doas
+  ansible.builtin.lineinfile:
+    dest: "{{ doas_conf }}"
+    mode: '0644'
+    line: "{{ line }}"
+

@@ -77,8 +77,9 @@
     job: "{{ backup_home }}/send.sh"
 
 - name: Allow doas send without password
-  ansible.builtin.lineinfile:
-    dest: /etc/doas.conf
+  ansible.builtin.include_role:
+    name: doas-entry
+  vars:
     line: "permit nopass :wheel as {{ backup_user }} cmd {{ backup_home }}/send.sh"
 
 - name: Ensure /etc/zzz.d
