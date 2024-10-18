@@ -1,14 +1,27 @@
 - name: Install packages
+  tags: [ apk, cups ]
   community.general.apk:
-    name: [ cups, brlaser ]
+    name:  [ cups, cups-filters ]
 
-- name: Add root to lpadmin group
+- name: Add users to lpadmin group
+  tags: [ cups ]
   ansible.builtin.user:
-    name: root
+    name: "{{ item }}"
     append: yes
-    groups: lpadmin
+    groups: [ lpadmin ]
+  loop: "{{ cups_admins | default([]) }}"
+
+- name: Add users to lp group
+  tags: [ cups ]
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: yes
+    groups: [ lp ]
+  loop: "{{ cups_users | default([]) }}"
+
 
 - name: Enable and start cupsd
+  tags: [ cups ]
   ansible.builtin.service:
     name: cupsd
     enabled: yes
