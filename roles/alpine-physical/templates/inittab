@@ -5,16 +5,21 @@
 ::wait:/sbin/openrc default
 
 # Set up a couple of mingetty's
+{% if alpine_release == "v3.20" %}
+{%  set mingetty = "/sbin/mingetty" %}
+{% else %}
+{%  set mingetty = "/usr/sbin/mingetty" %}
+{% endif %}
 {% if autologin %}
 tty1::respawn:/bin/login -f {{ autologin }}
 {% else %}
-tty1::respawn:/sbin/mingetty tty1
+tty1::respawn:{{ mingetty }} tty1
 {% endif %}
-tty2::respawn:/sbin/mingetty tty2
-tty3::respawn:/sbin/mingetty tty3
-tty4::respawn:/sbin/mingetty tty4
-tty5::respawn:/sbin/mingetty tty5
-tty6::respawn:/sbin/mingetty tty6
+tty2::respawn:{{ mingetty }} tty2
+tty3::respawn:{{ mingetty }} tty3
+tty4::respawn:{{ mingetty }} tty4
+tty5::respawn:{{ mingetty }} tty5
+tty6::respawn:{{ mingetty }} tty6
 
 # Put a getty on the serial port
 #ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100

@@ -25,6 +25,7 @@
     creates: /etc/runlevels/sysinit/udev
 
 - name: Use mingetty
+  tags: [inittab]
   ansible.builtin.template:
     dest: /etc/inittab
     src: inittab
