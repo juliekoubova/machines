@@ -6,42 +6,117 @@ if [ `id -u` != 0 ]; then
   exit 1
 fi
 
-if [ `uname` = "FreeBSD" ]; then
-  platform=freebsd
-  doasconf=/usr/local/etc/doas.conf
-elif command -v apk > /dev/null; then
-  platform=alpine
-  doasconf=/etc/doas.conf
-else
-  echo unknown OS >&2
-  exit 1
-fi
+case `uname` in
+  FreeBSD)
+    platform=freebsd;;
+  Linux)
+    platform=`. /etc/os-release; echo $ID`;;
+  *)
+    echo unknown uname `uname` >&2
+    exit 1
+    ;;
+esac
 
-packages_alpine() {
-  apk add curl doas openssh python3 
+case "$platform" in
+  alpine|chimera)
+    doasconf=/etc/doas.conf
+    ;;
+  freebsd)
+    doasconf=/usr/local/etc/doas.conf
+    ;;
+  *)
+    echo unknown platform $platform >&2
+    exit 1
+    ;;
+esac
+
+: "${ansible_user:=ansible}"
+: "${ansible_user_group:=wheel}"
+: "${apk_virtual_pkg:=julie-machine-bootstrap}"
+: "${ssh_keys:=https://juliekoubova.net/keys}"
+
+################################################################################
+## Linux 
+################################################################################
+
+dinit_sshd() {
+  if [ -f /etc/dinit.d/boot.d/sshd ]; then
+    echo sshd already enabled >&2
+    return 0
+  else
+    dinitctl enable sshd
+  fi
+
 }
 
-user_alpine() {
-  local username=$1 group=$2 uid=$3
-  adduser -D -G "$group" -u "$uid" "$username" 
-  # unlock the user, but don't allow password login
-  echo "$username:*" | chpasswd -e 
+openrc_sshd() {
+  rc-update add sshd && rc-service sshd start
 }
 
-sshd_alpine() {
-  rc-update add sshd
-  rc-service sshd start
+busybox_user() {
+  adduser -D -S -G "$ansible_user_group" "$ansible_user"
 }
 
-packages_freebsd() {
-  pkg install --yes python311 doas curl
+shadow_user() {
+  useradd \
+    --create-home \
+    --gid "$ansible_user_group" \
+    --system \
+    "$ansible_user"
 }
 
-user_freebsd() {
-  pw useradd -m -n "$1" -u "$3" -g "$2" -w no
+################################################################################
+## Alpine 
+################################################################################
+
+alpine_packages() {
+  apk add \
+    --no-interactive \
+    --virtual "$apk_virtual_pkg" \
+    curl doas openssh python3
 }
 
-sshd_freebsd() {
+alpine_sshd() {
+  openrc_sshd
+}
+
+alpine_user() {
+  busybox_user
+}
+
+
+################################################################################
+## Chimera
+################################################################################
+
+chimera_packages() {
+  apk add \
+    --no-interactive \
+    --virtual "$apk_virtual_pkg" \
+    curl opendoas openssh python shadow
+}
+
+chimera_sshd() {
+  dinit_sshd
+}
+
+chimera_user() {
+  shadow_user
+}
+
+################################################################################
+## FreeBSD
+################################################################################
+
+freebsd_packages() {
+  pkg install --yes python doas curl
+}
+
+freebsd_user() {
+  pw useradd -m -n "$ansible_user" -g "$ansible_user_group" -w no
+}
+
+freebsd_sshd() {
   if [ `sysrc -n sshd_enable` != "YES" ]; then
     sysrc sshd_enable=YES
   fi
@@ -50,21 +125,37 @@ sshd_freebsd() {
   fi
 }
 
-packages_$platform
-sshd_$platform
+################################################################################
+## Common
+################################################################################
 
-if ! grep -Eq "^ansible:" /etc/passwd; then
-  user_$platform ansible wheel 2000
+
+${platform}_packages || exit 1
+${platform}_sshd || exit 1
+
+if ! grep -Eq "^${ansible_user}:" /etc/passwd; then
+  ${platform}_user || exit 1
 fi
 
-cat > "$doasconf" <<EOF 
+cat > "$doasconf" <<EOF
+# doas.conf(5) created by juliekoubova/machines/scripts/bootstrap
+
+# Give users in the wheel group access.
 permit persist :wheel
-permit nopass ansible
+
+# Give root access to other users.
+permit nopass root
+
+# Give root access to itself, no password, transparently.
+permit nopass keepenv setenv { PATH } root as root
+
+# Give ${ansible_user} access to root
+permit nopass ${ansible_user} as root
 EOF
 
-su ansible -c '
+su "${ansible_user}" -s /bin/sh -c "
   set -ex
-  mkdir -p -m 700 "$HOME/.ssh";
-  curl https://juliekoubova.net/keys -o "$HOME/.ssh/authorized_keys";
-  chmod 644 "$HOME/.ssh/authorized_keys"'
+  mkdir -p -m 700 \"\$HOME/.ssh\";
+  curl \"${ssh_keys}\" -o \"\$HOME/.ssh/authorized_keys\";
+  chmod 644 \"\$HOME/.ssh/authorized_keys\""
 
