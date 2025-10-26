@@ -1,0 +1,6 @@
+- name: "Timezone {{ timezone }}"
+  tags: timezone
+  file:
+    src: "/usr/share/zoneinfo/{{ timezone }}"
+    path: /etc/localtime
+    state: link

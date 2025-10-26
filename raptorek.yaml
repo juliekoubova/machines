@@ -2,56 +2,59 @@
 - hosts: raptorek
   become: yes
   roles:
-    - role: alpine-base
-    - role: dhcpcd
-
-    - role: alpine-sdk
-      tags: [ alpine-sdk ]
-
-    - role: alpine-physical
-      consolefont: ter-124b.psf.gz
-      tags: [ alpine-physical ]
-
-    - role: samba
-
-    - role: sway-desktop
-      sway_users: [ julie ]
-    
-    - role: flatpak
-
-    - role: cups
-      tags: [ cups ]
-
-    - role: user-julie
-    - role: user-ansible
-
-    - role: podman-user
-      podman_user: julie
-
-    - role: 1password-cli
-
-    - role: xorg-server
-      xorg_users: [ julie ]
-
-    - role: qmk-sdk
-
-    - role: cifs-mount
-      credentials: "{{ cifs_credentials_home }}"
-      mount: /cifs/home/config
-      server: home.totoro.family
-      share: config
-      uid: 1000
-      gid: 1000
-
-  tasks:
-    - name: Install firmware
-      community.general.apk:
-        name:
-          - linux-firmware-amdgpu
-          - linux-firmware-intel
-
-    - name: Configure mkinitfs
-      ansible.builtin.copy:
-        dest: /etc/mkinitfs/mkinitfs.conf
-        content: 'features="base keymap kms nvme usb zfs zfshost"'
-
+    - role: unix/shell-tmout
+    - role: unix/sshd
+    - role: unix/timezone
+#   - role: alpine-base
+#   - role: dhcpcd
+#
+#   - role: alpine-sdk
+#     tags: [ alpine-sdk ]
+#
+#   - role: alpine-physical
+#     consolefont: ter-124b.psf.gz
+#     tags: [ alpine-physical ]
+#
+#   - role: samba
+#
+#   - role: sway-desktop
+#     sway_users: [ julie ]
+#   
+#   - role: flatpak
+#
+#   - role: cups
+#     tags: [ cups ]
+#
+#   - role: user-julie
+#   - role: user-ansible
+#
+#   - role: podman-user
+#     podman_user: julie
+#
+#   - role: 1password-cli
+#
+#   - role: xorg-server
+#     xorg_users: [ julie ]
+#
+#   - role: qmk-sdk
+#
+#   - role: cifs-mount
+#     credentials: "{{ cifs_credentials_home }}"
+#     mount: /cifs/home/config
+#     server: home.totoro.family
+#     share: config
+#     uid: 1000
+#     gid: 1000
+#
+# tasks:
+#   - name: Install firmware
+#     community.general.apk:
+#       name:
+#         - linux-firmware-amdgpu
+#         - linux-firmware-intel
+#
+#   - name: Configure mkinitfs
+#     ansible.builtin.copy:
+#       dest: /etc/mkinitfs/mkinitfs.conf
+#       content: 'features="base keymap kms nvme usb zfs zfshost"'
+#

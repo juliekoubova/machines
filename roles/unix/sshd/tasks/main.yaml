@@ -1,0 +1,20 @@
+- name: Configure sshd
+  tags: sshd
+  service:
+    name: sshd
+    enabled: "{{ sshd_enabled }}"
+    state: "{{ 'started' if sshd_enabled else 'stopped' }}"
+
+- name: SSH PermitRootLogin = {{ sshd_permit_root_login }}
+  tags: sshd
+  copy:
+    dest: "{{ sshd_config_dir }}/julie-permit-root-login.conf"
+    content: |
+      PermitRootLogin {{ 'yes' if sshd_permit_root_login else 'no' }}
+
+- name: SSH password authentication = {{ sshd_password_authentication }}
+  tags: sshd
+  copy:
+    dest: "{{ sshd_config_dir }}/julie-password-authentication.conf"
+    content: |
+      PasswordAuthentication {{ 'yes' if sshd_password_authentication else 'no' }}

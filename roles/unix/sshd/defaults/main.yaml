@@ -1,0 +1,4 @@
+sshd_config_dir: /etc/ssh/sshd_config.d/
+sshd_enabled: yes
+sshd_password_authentication: no
+sshd_permit_root_login: no

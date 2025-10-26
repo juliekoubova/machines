@@ -1,0 +1,7 @@
+- name: Timeout login shells
+  ansible.builtin.copy:
+    dest: /etc/profile.d/julie-tmout.sh
+    content: |
+      TMOUT={{ shell_tmout }}
+      readonly TMOUT
+
