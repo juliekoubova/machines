@@ -5,6 +5,7 @@
     - role: unix/shell-tmout
     - role: unix/sshd
     - role: unix/timezone
+    - role: logind
 #   - role: alpine-base
 #   - role: dhcpcd
 #

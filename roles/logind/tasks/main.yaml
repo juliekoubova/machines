@@ -1,0 +1,12 @@
+- name: Configure logind.conf
+  tags: logind
+  register: logind_conf
+  ansible.builtin.copy:
+    dest: /etc/elogind/logind.conf.d/100-julie.conf
+    content: |
+      [Login]
+      IdleAction={{ logind_idle_action }}
+
+- name: Reload logind
+  when: logind_conf.changed
+  ansible.builtin.command: loginctl reload
