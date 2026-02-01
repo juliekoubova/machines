@@ -2,32 +2,32 @@
 set -e
 
 if [ `id -u` != 0 ]; then
-  echo must be root >&2
-  exit 1
+    echo must be root >&2
+    exit 1
 fi
 
 case `uname` in
-  FreeBSD)
-    platform=freebsd;;
-  Linux)
-    platform=`. /etc/os-release; echo $ID`;;
-  *)
-    echo unknown uname `uname` >&2
-    exit 1
-    ;;
+    FreeBSD)
+        platform=freebsd ;;
+    Linux)
+        platform=`. /etc/os-release; echo $ID` ;;
+    *)
+        echo unknown uname `uname` >&2
+        exit 1
+        ;;
 esac
 
 case "$platform" in
-  alpine|chimera)
-    doasconf=/etc/doas.conf
-    ;;
-  freebsd)
-    doasconf=/usr/local/etc/doas.conf
-    ;;
-  *)
-    echo unknown platform $platform >&2
-    exit 1
-    ;;
+    alpine|chimera)
+        doasconf=/etc/doas.conf
+        ;;
+    freebsd)
+        doasconf=/usr/local/etc/doas.conf
+        ;;
+    *)
+        echo unknown platform $platform >&2
+        exit 1
+        ;;
 esac
 
 : "${ansible_user:=ansible}"
@@ -36,52 +36,52 @@ esac
 : "${ssh_keys:=https://juliekoubova.net/keys}"
 
 ################################################################################
-## Linux 
+## Linux
 ################################################################################
 
 dinit_sshd() {
-  if [ -f /etc/dinit.d/boot.d/sshd ]; then
-    echo sshd already enabled >&2
-    return 0
-  else
-    dinitctl enable sshd
-  fi
+    if [ -f /etc/dinit.d/boot.d/sshd ]; then
+        echo sshd already enabled >&2
+        return 0
+    else
+        dinitctl enable sshd
+    fi
 
 }
 
 openrc_sshd() {
-  rc-update add sshd && rc-service sshd start
+    rc-update add sshd && rc-service sshd start
 }
 
 busybox_user() {
-  adduser -D -S -G "$ansible_user_group" "$ansible_user"
+    adduser -D -S -G "$ansible_user_group" "$ansible_user"
 }
 
 shadow_user() {
-  useradd \
-    --create-home \
-    --gid "$ansible_user_group" \
-    --system \
-    "$ansible_user"
+    useradd \
+        --create-home \
+        --gid "$ansible_user_group" \
+        --system \
+        "$ansible_user"
 }
 
 ################################################################################
-## Alpine 
+## Alpine
 ################################################################################
 
 alpine_packages() {
-  apk add \
-    --no-interactive \
-    --virtual "$apk_virtual_pkg" \
-    curl doas openssh python3
+    apk add \
+        --no-interactive \
+        --virtual "$apk_virtual_pkg" \
+        curl doas openssh python3
 }
 
 alpine_sshd() {
-  openrc_sshd
+    openrc_sshd
 }
 
 alpine_user() {
-  busybox_user
+    busybox_user
 }
 
 
@@ -90,18 +90,18 @@ alpine_user() {
 ################################################################################
 
 chimera_packages() {
-  apk add \
-    --no-interactive \
-    --virtual "$apk_virtual_pkg" \
-    curl opendoas openssh python shadow
+    apk add \
+        --no-interactive \
+        --virtual "$apk_virtual_pkg" \
+        curl opendoas openssh python shadow
 }
 
 chimera_sshd() {
-  dinit_sshd
+    dinit_sshd
 }
 
 chimera_user() {
-  shadow_user
+    shadow_user
 }
 
 ################################################################################
@@ -109,20 +109,20 @@ chimera_user() {
 ################################################################################
 
 freebsd_packages() {
-  pkg install --yes python doas curl
+    pkg install --yes python doas curl
 }
 
 freebsd_user() {
-  pw useradd -m -n "$ansible_user" -g "$ansible_user_group" -w no
+    pw useradd -m -n "$ansible_user" -g "$ansible_user_group" -w no
 }
 
 freebsd_sshd() {
-  if [ `sysrc -n sshd_enable` != "YES" ]; then
-    sysrc sshd_enable=YES
-  fi
-  if ! service sshd status > /dev/null; then
-    service sshd start
-  fi
+    if [ `sysrc -n sshd_enable` != "YES" ]; then
+        sysrc sshd_enable=YES
+    fi
+    if ! service sshd status > /dev/null; then
+        service sshd start
+    fi
 }
 
 ################################################################################
@@ -134,7 +134,7 @@ ${platform}_packages || exit 1
 ${platform}_sshd || exit 1
 
 if ! grep -Eq "^${ansible_user}:" /etc/passwd; then
-  ${platform}_user || exit 1
+    ${platform}_user || exit 1
 fi
 
 cat > "$doasconf" <<EOF
@@ -153,9 +153,11 @@ permit nopass keepenv setenv { PATH } root as root
 permit nopass ${ansible_user} as root
 EOF
 
-su "${ansible_user}" -s /bin/sh -c "
-  set -ex
-  mkdir -p -m 700 \"\$HOME/.ssh\";
-  curl \"${ssh_keys}\" -o \"\$HOME/.ssh/authorized_keys\";
-  chmod 644 \"\$HOME/.ssh/authorized_keys\""
-
+cat | su "${ansible_user}" -s /bin/sh <<EOF
+set -ex
+echo >2 Creating "\$HOME/.ssh"
+mkdir -p -m 700 "\$HOME/.ssh"
+echo >2 "Downloading ${ssh_keys}"
+curl "${ssh_keys}" -o "\$HOME/.ssh/authorized_keys"
+chmod 644 "\$HOME/.ssh/authorized_keys"
+EOF
