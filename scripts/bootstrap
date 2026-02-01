@@ -1,18 +1,18 @@
 #!/bin/sh
-set -e
 
 if [ `id -u` != 0 ]; then
-    echo must be root >&2
+    echo >&2 "must be root"
     exit 1
 fi
 
-case `uname` in
+uname=`uname`
+case "$uname" in
     FreeBSD)
         platform=freebsd ;;
     Linux)
         platform=`. /etc/os-release; echo $ID` ;;
     *)
-        echo unknown uname `uname` >&2
+        echo >&2 "unknown uname $uname"
         exit 1
         ;;
 esac
@@ -25,7 +25,7 @@ case "$platform" in
         doasconf=/usr/local/etc/doas.conf
         ;;
     *)
-        echo unknown platform $platform >&2
+        echo >&2 "unknown platform $platform"
         exit 1
         ;;
 esac
@@ -41,7 +41,7 @@ esac
 
 dinit_sshd() {
     if [ -f /etc/dinit.d/boot.d/sshd ]; then
-        echo sshd already enabled >&2
+        echo >&2 "sshd already enabled"
         return 0
     else
         dinitctl enable sshd
@@ -130,13 +130,20 @@ freebsd_sshd() {
 ################################################################################
 
 
+echo >&2 "Installing packages..."
 ${platform}_packages || exit 1
+
+echo >&2 "Enabling sshd..."
 ${platform}_sshd || exit 1
 
-if ! grep -Eq "^${ansible_user}:" /etc/passwd; then
+if grep -Eq "^${ansible_user}:" /etc/passwd; then
+    echo >&2 "User '${ansible_user}' already exists"
+else
+    echo >&2 "Creating user '${ansible_user}'..."
     ${platform}_user || exit 1
 fi
 
+echo >&2 "Configuring '${doasconf}'..."
 cat > "$doasconf" <<EOF
 # doas.conf(5) created by juliekoubova/machines/scripts/bootstrap
 
@@ -154,10 +161,10 @@ permit nopass ${ansible_user} as root
 EOF
 
 cat | su "${ansible_user}" -s /bin/sh <<EOF
-set -ex
-echo >2 Creating "\$HOME/.ssh"
+echo >&2 Creating "\$HOME/.ssh"
 mkdir -p -m 700 "\$HOME/.ssh"
-echo >2 "Downloading ${ssh_keys}"
-curl "${ssh_keys}" -o "\$HOME/.ssh/authorized_keys"
+echo >&2 "Downloading ${ssh_keys}"
+curl "${ssh_keys}" -o "\$HOME/.ssh/authorized_keys" --silent
+echo >&2 "Changing authorized_keys permissions"
 chmod 644 "\$HOME/.ssh/authorized_keys"
 EOF
